@@ -1,5 +1,7 @@
 <?php
 namespace webc;
+date_default_timezone_set('Asia/Shanghai');
+require_once __DIR__ . '/3party/smarty/Smarty.class.php';
 
 class OServer 
 {
@@ -38,9 +40,12 @@ abstract class Builder
 
 	protected $_server;
 
-	public function __construct($xml)
+	public function __construct($xmlFile)
 	{
-		$this->_xml = $xml;
+		$this->_xml = @simplexml_load_file($xmlFile, null, LIBXML_NOCDATA);
+		if($this->_xml === FALSE)
+			throw new Exception('bad xml file');
+
 		$this->_doc = array();
 
 		$this->_server = new OServer();

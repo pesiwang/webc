@@ -40,6 +40,17 @@ class StructureBuilder extends Builder
 			}
 		}
 
-		$this->output('structure_builder.pht');
+		$this->output('structure_builder.tpl');
 	}
+}
+
+if($argc < 2)
+	die("usage: php " . $argv[0] . " <xml>\n");
+
+try{
+	$builder = new StructureBuilder($argv[1]);
+	$builder->execute();
+}
+catch(Exception $e){
+	die("compilation failed, reason:" . $e->getMessage() . "\n");
 }

@@ -25,7 +25,7 @@ class InterfaceBuilder extends Builder
 			$this->_doc[] = $interface;
 		}
 
-		$this->output('interface_builder.pht');
+		$this->output('interface_builder.tpl');
 	}
 
 	private function _buildParams($xml){
@@ -48,4 +48,15 @@ class InterfaceBuilder extends Builder
 		}
 		return $params;
 	}
+}
+
+if($argc < 2)
+	die("usage: php " . $argv[0] . " <xml>\n");
+
+try{
+	$builder = new InterfaceBuilder($argv[1]);
+	$builder->execute();
+}
+catch(Exception $e){
+	die("compilation failed, reason:" . $e->getMessage() . "\n");
 }

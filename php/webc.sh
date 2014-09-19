@@ -27,10 +27,10 @@ mkdir -p ${V_TARGET_FOLDER}/${V_PROJECT_NAME}
 mkdir -p ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib
 mkdir -p ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/app
 
-php ${V_SCRIPT_FOLDER}/webc.php ${V_SOURCE_XML} structure > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/structures.class.php
-php ${V_SCRIPT_FOLDER}/webc.php ${V_SOURCE_XML} interface > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/interfaces.class.php
-php ${V_SCRIPT_FOLDER}/webc.php ${V_SOURCE_XML} bootstrap > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/bootstrap.php
-for V_APP_NAME in $(php ${V_SCRIPT_FOLDER}/webc.php ${V_SOURCE_XML} applist)
+php ${V_SCRIPT_FOLDER}/builder/structure_builder.php ${V_SOURCE_XML} > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/structures.class.php
+php ${V_SCRIPT_FOLDER}/builder/interface_builder.php ${V_SOURCE_XML} > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/interfaces.class.php
+php ${V_SCRIPT_FOLDER}/builder/bootstrap_builder.php ${V_SOURCE_XML} > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/bootstrap.php
+for V_APP_NAME in $(php ${V_SCRIPT_FOLDER}/builder/applist_builder.php ${V_SOURCE_XML})
 do
 	V_APP_PATH=$(dirname $(echo ${V_APP_NAME} | sed 's/\./\//g'))
 	V_APP_FILE=$(basename $(echo ${V_APP_NAME} | sed 's/\./\//g'))".php"
@@ -38,7 +38,7 @@ do
 	if [ -f ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/app/${V_APP_PATH}/${V_APP_FILE} ]; then
 		echo "skipping ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/app/${V_APP_PATH}/${V_APP_FILE}";
 	else
-		php ${V_SCRIPT_FOLDER}/webc.php ${V_SOURCE_XML} appdetail ${V_APP_NAME} > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/app/${V_APP_PATH}/${V_APP_FILE}
+		php ${V_SCRIPT_FOLDER}/builder/appdetail_builder.php ${V_SOURCE_XML} ${V_APP_NAME} > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/app/${V_APP_PATH}/${V_APP_FILE}
 	fi
 done
 echo "building done";

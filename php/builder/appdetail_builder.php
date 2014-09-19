@@ -10,6 +10,18 @@ class AppdetailBuilder extends Builder
 	}
 	public function execute()
 	{
-		$this->output('appdetail_builder.pht');
+		$this->output('appdetail_builder.tpl');
 	}
+}
+
+if($argc < 3)
+	die("usage: php " . $argv[0] . " <xml> <appname>\n");
+
+try{
+	$builder = new AppdetailBuilder($argv[1]);
+	$builder->setAppName($argv[2]);
+	$builder->execute();
+}
+catch(Exception $e){
+	die("compilation failed, reason:" . $e->getMessage() . "\n");
 }

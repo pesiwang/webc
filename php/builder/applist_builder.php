@@ -12,6 +12,17 @@ class ApplistBuilder extends Builder
 			$this->_doc[] = (string)($item->attributes()->name);
 		}
 
-		$this->output('applist_builder.pht');
+		$this->output('applist_builder.tpl');
 	}
+}
+
+if($argc < 2)
+	die("usage: php " . $argv[0] . " <xml>\n");
+		    
+try{
+	$builder = new ApplistBuilder($argv[1]);
+	$builder->execute();
+}
+catch(Exception $e){
+	die("compilation failed, reason:" . $e->getMessage() . "\n");
 }
