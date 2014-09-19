@@ -1,6 +1,6 @@
 <?php
 namespace webc;
-require_once __DIR__ . '/../builder.php';
+require_once __DIR__ . '/../../builder.php';
 
 class InterfaceBuilder extends Builder
 {
@@ -25,7 +25,7 @@ class InterfaceBuilder extends Builder
 			$this->_doc[] = $interface;
 		}
 
-		$this->output('interface_builder.tpl');
+		$this->output(__DIR__ . '/interface_builder.tpl');
 	}
 
 	private function _buildParams($xml){

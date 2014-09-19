@@ -1,17 +1,21 @@
 <?php
-require __DIR__ . '/lib/structure.class.php';
-require __DIR__ . '/lib/interface.class.php';
+require __DIR__ . '/lib/structures.class.php';
+require __DIR__ . '/lib/interfaces.class.php';
 class Bootstrap{
-	static public function run($appDir){
-		$json = json_decode(file_get_contents('php://input'), true);
+	static public function run(){
+		$json = json_decode(($_SERVER['REQUEST_METHOD'] == 'GET') ? $_SERVER['QUERY_STRING'] : file_get_contents('php://input'), true);
 		if((NULL == $json) || (FALSE == $json)){
+			die('Bad Request');
 			return;
 		}
 
-		$appFile = __DIR__ . '/app/' . preg_replace('/\\./', '/', $_SERVER['REQUEST_URI']) . '.php';
-		$appClass = '\\<%$server->namespace%>\\' . ucfirst(preg_replace('/\\.([a-z])/ei', "strtoupper('\\1')", $_SERVER['REQUEST_URI']));
-		$requestClass = '\\<%$server->namespace%>\\' . $appClass . 'Request';
-		$responseClass = '\\<%$server->namespace%>\\' . $appClass . 'Response';
+		$parsedUrl = parse_url($_SERVER['REQUEST_URI']);
+		$requestInterfaceName = ltrim($parsedUrl['path'], '/');
+
+		$appFile = __DIR__ . '/app/' . preg_replace('/\\./', '/', $requestInterfaceName) . '.php';
+		$appClass = '\\' . ucfirst(preg_replace('/\\.([a-z])/ei', "strtoupper('\\1')", $requestInterfaceName));
+		$requestClass = '\\<%$server->namespace%>' . $appClass . 'Request';
+		$responseClass = '\\<%$server->namespace%>' . $appClass . 'Response';
 
 		if(!file_exists($appFile)){
 			die('no such file:' . $appFile);
@@ -32,7 +36,7 @@ class Bootstrap{
 		echo json_encode($json);
 	}
 
-	static private function _fromArray($structure, $array){
+	static private function _fromArray(&$structure, $array){
 		foreach($structure as $k => &$v){
 			if(!isset($array[$k]))
 				continue;
@@ -44,7 +48,7 @@ class Bootstrap{
 		}
 	}
 
-	static private function _toArray($structure, $array){
+	static private function _toArray($structure, &$array){
 		foreach($structure as $k => &$v){
 			if(is_object($v)){
 				$subArray = array();

@@ -1,6 +1,6 @@
 <?php
 namespace webc;
-require_once __DIR__ . '/../builder.php';
+require_once __DIR__ . '/../../builder.php';
 
 class AppdetailBuilder extends Builder
 {
@@ -10,7 +10,7 @@ class AppdetailBuilder extends Builder
 	}
 	public function execute()
 	{
-		$this->output('appdetail_builder.tpl');
+		$this->output(__DIR__ . '/appdetail_builder.tpl');
 	}
 }
 

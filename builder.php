@@ -55,7 +55,6 @@ abstract class Builder
 		$this->_server->namespace = (string)($this->_xml->server->namespace);
 
 		$this->_smarty = new \Smarty();
-		$this->_smarty->template_dir = __DIR__ . '/builder/';
 		$this->_smarty->compile_dir = '/tmp';
 		$this->_smarty->left_delimiter = '<%';
 		$this->_smarty->right_delimiter = '%>';

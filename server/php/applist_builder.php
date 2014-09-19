@@ -1,6 +1,6 @@
 <?php
 namespace webc;
-require_once __DIR__ . '/../builder.php';
+require_once __DIR__ . '/../../builder.php';
 
 class ApplistBuilder extends Builder
 {
@@ -12,7 +12,7 @@ class ApplistBuilder extends Builder
 			$this->_doc[] = (string)($item->attributes()->name);
 		}
 
-		$this->output('applist_builder.tpl');
+		$this->output(__DIR__ . '/applist_builder.tpl');
 	}
 }
 

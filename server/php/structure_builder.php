@@ -1,6 +1,6 @@
 <?php
 namespace webc;
-require_once __DIR__ . '/../builder.php';
+require_once __DIR__ . '/../../builder.php';
 
 class StructureBuilder extends Builder
 {
@@ -40,7 +40,7 @@ class StructureBuilder extends Builder
 			}
 		}
 
-		$this->output('structure_builder.tpl');
+		$this->output(__DIR__ . '/structure_builder.tpl');
 	}
 }
 
