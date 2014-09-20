@@ -8,37 +8,33 @@
 	</server>
 
 	<!--{第二部分,定义常见结构体}-->
-	<structure name="user_info">
-		<param name="nick" type="STRING" validate="^.{3,16}$"></param>
-		<param name="age" type="INTEGER">18</param>
-	</structure>
-	<structure name="user_account">
-		<param name="phone" type="STRING" validate="^1[3458][0-9]{9}$"></param>
-		<param name="password" type="STRING" validate="^\\w{32}$"></param>
-	</structure>
-	<structure name="user">
-		<param name="info" type="user_info"></param>
-		<param name="account" type="user_account"></param>
-	</structure>
+	<struct name="user_info">
+		<param name="nick" type="STRING" validation="^.{3,16}$"/>
+		<param name="age" type="INTEGER" validation="^[0-9]+$"/>
+	</struct>
+	<struct name="user_account">
+		<param name="phone" type="STRING" validation="^1[3458][0-9]{9}$"/>
+		<param name="password" type="STRING" validation="^\\w{32}$"/>
+	</struct>
+	<struct name="user_register_request">
+		<param name="type" type="INTEGER"/>
+		<param name="info" type="OBJECT" reference="user_info"/>
+		<param name="extra" type="ARRAY" reference="STRING"/>
+	</struct>
+	<struct name="user_register_response">
+		<param name="result" type="BOOL"/>
+		<param name="info" type="OBJECT" reference="user_info"/>
+	</struct>
+	<!--{=====struct for user.signin interface=====}-->
+	<struct name="user_signin_request">
+		<param name="account" type="OBJECT" reference="user_account"/>
+	</struct>
+	<struct name="user_signin_response">
+		<param name="result" type="INTEGER"/>
+		<param name="reason" type="STRING"/>
+	</struct>
 
 	<!--{第三部分,定义web接口列表}-->
-	<interface name="user.register"><!--用户注册接口-->
-		<request>
-			<param name="type" type="INTEGER">1</param>
-			<param name="info" type="user_info"></param>
-		</request>
-		<response>
-			<param name="result" type="BOOL">true</param>
-			<param name="info" type="user_info"></param>
-		</response>
-	</interface>
-	<interface name="user.signin"><!--用户登录接口-->
-		<request>
-			<param name="account" type="user_account"></param>
-		</request>
-		<response>
-			<param name="result" type="INTEGER">0</param>
-			<param name="reason" type="STRING"></param>
-		</response>
-	</interface>
+	<interface name="user.register" request="user_register_request" response="user_register_response"/><!--用户注册接口-->
+	<interface name="user.signin" request="user_signin_request" response="user_signin_response"/><!--用户登录接口-->
 </web>

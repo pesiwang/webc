@@ -3,7 +3,7 @@ namespace webc;
 date_default_timezone_set('Asia/Shanghai');
 require_once __DIR__ . '/3party/smarty/Smarty.class.php';
 
-class OServer 
+class ObjServer 
 {
 	public $host;
 	public $port;
@@ -11,62 +11,158 @@ class OServer
 	public $namespace;
 }
 
-class OParam
+class ObjParam
 {
 	public $name;
-	public $type;
+	public $type;       //OBJECT|ARRAY|INTEGER|BOOL|STRING
 	public $validation;
-	public $default;
+	public $reference;
 }
 
-class OStructure
+class ObjStruct
 {
 	public $name;
 	public $params;
 }
 
-class OInterface
+class ObjInterface
 {
 	public $name;
-	public $requestParams;
-	public $responseParams;
+	public $request;
+	public $response;
 }
 
-abstract class Builder
+class Builder
 {
-	protected $_xml;
-	protected $_smarty;
-	protected $_doc;
+	private $_xml;
+	private $_server;
+	private $_structs;
+	private $_interfaces;
+	private $_extra;
 
-	protected $_server;
+	private $_knownStructs;
 
-	public function __construct($xmlFile)
-	{
+	public function __construct($extra){
+		$this->_extra = $extra;
+	}
+
+	public function compile($xmlFile, $tplFile){
 		$this->_xml = @simplexml_load_file($xmlFile, null, LIBXML_NOCDATA);
 		if($this->_xml === FALSE)
-			throw new Exception('bad xml file');
+			throw new \Exception('bad xml file');
 
-		$this->_doc = array();
+		$this->_compileServer();
+		$this->_compileStructs();
+		$this->_compileInterfaces();
 
-		$this->_server = new OServer();
+		$smarty = new \Smarty();
+		$smarty->compile_dir = '/tmp';
+		$smarty->left_delimiter = '<%';
+		$smarty->right_delimiter = '%>';
+		$smarty->caching = false;
+		$smarty->assign('server', $this->_server);
+		$smarty->assign('structs', $this->_structs);
+		$smarty->assign('interfaces', $this->_interfaces);
+		$smarty->assign('extra', $this->_extra);
+		$smarty->display($tplFile);
+	}
+
+	private function _compileServer(){
+		if($this->_xml->server == NULL)
+			throw new \Exception("no [server] block found in xml");
+		if($this->_xml->server->host == NULL)
+			throw new \Exception("no [host] node found in [server] block");
+		if($this->_xml->server->port == NULL)
+			throw new \Exception("no [port] node found in [server] block");
+		if($this->_xml->server->protocol == NULL)
+			throw new \Exception("no [protocol] node found in [server] block");
+		if($this->_xml->server->namespace == NULL)
+			throw new \Exception("no [namespace] node found in [server] block");
+
+		$this->_server = new ObjServer();
 		$this->_server->host = (string)($this->_xml->server->host);
 		$this->_server->port = (int)($this->_xml->server->port);
 		$this->_server->protocol = (string)($this->_xml->server->protocol);
 		$this->_server->namespace = (string)($this->_xml->server->namespace);
-
-		$this->_smarty = new \Smarty();
-		$this->_smarty->compile_dir = '/tmp';
-		$this->_smarty->left_delimiter = '<%';
-		$this->_smarty->right_delimiter = '%>';
-		$this->_smarty->caching = false;
-		$this->_smarty->assign('server', $this->_server);
 	}
 
-	abstract public function execute();
+	private function _compileStructs(){
+		$this->_knownStructs = array();
 
-	public function output($tpl)
-	{
-		$this->_smarty->assign('doc', $this->_doc);
-		$this->_smarty->display($tpl);
+		foreach($this->_xml->struct as $item){
+			if(NULL == $item->attributes()->name)
+				throw new \Exception("no [name] attribute found in [struct] block");
+			if(NULL == $item->param)
+				throw new \Exception("no [param] node found in [struct] block");
+			
+			$struct = new ObjStruct();
+			$struct->name = (string)($item->attributes()->name);
+			$struct->params = array();
+
+			foreach($item->param as $subItem){
+				if(NULL == $subItem->attributes()->name)
+					throw new \Exception("no [name] attribute found in [param] block");
+				if(NULL == $subItem->attributes()->type)
+					throw new \Exception("no [type] attribute found in [param] block");
+
+				$param = new ObjParam();
+				$param->name = (string)($subItem->attributes()->name);
+				$param->type = (string)($subItem->attributes()->type);
+				$param->validation = (NULL != $subItem->attributes()->validation) ? (string)($subItem->attributes()->validation) : NULL;
+				$param->reference = (NULL != $subItem->attributes()->reference) ? (string)($subItem->attributes()->reference) : NULL;
+
+				if((($param->type == 'OBJECT') || ($param->type == 'ARRAY')) && ($param->reference == NULL))
+					throw new \Exception("no [reference] attribute found in [param as OBJECT or ARRAY] block");
+
+				$struct->params[] = $param;
+			}
+
+			$this->_structs[] = $struct;
+			$this->_knownStructs[$struct->name] = 1;
+		}
+
+		foreach($this->_structs as $struct){
+			foreach($struct->params as $param){
+				if(NULL == $param->reference)
+					continue;
+
+				if(strcmp($param->reference, strtoupper($param->reference)) == 0)
+					continue;
+
+				if(!isset($this->_knownStructs[$param->reference]))
+					throw new \Exception('refering to unknown struct ' . $param->reference . ' in [' . $struct->name . ']');
+			}
+		}
 	}
+
+	private function _compileInterfaces(){
+		foreach($this->_xml->interface as $item){
+			$interface = new ObjInterface();
+			if(NULL == $item->attributes()->name)
+				throw new \Exception("no [name] attribute found in [interface] block");
+			$interface->name = (string)($item->attributes()->name);
+
+			$interface->request = (NULL != $item->attributes()->request) ? (string)($item->attributes()->request) : str_replace('.', '_', $interface->name) . '_request';
+			$interface->response = (NULL != $item->attributes()->response) ? (string)($item->attributes()->response) : str_replace('.', '_', $interface->name) . '_response';
+
+			if(!isset($this->_knownStructs[$interface->request]))
+				throw new \Exception('refering to unknown struct ' . $interface->request);
+			if(!isset($this->_knownStructs[$interface->response]))
+				throw new \Exception('refering to unknown struct ' . $interface->response);
+
+			$this->_interfaces[] = $interface;
+		}
+	}
+}
+
+if($argc < 3)
+	die("usage: php " . $argv[0] . " <xml> <tpl>\n");
+
+try{
+	$extra = ($argc > 3) ? $argv[3] : null;
+	$builder = new Builder($extra);
+	$builder->compile($argv[1], $argv[2]);
+}
+catch(\Exception $e){
+	die("compilation failed, reason:" . $e->getMessage() . "\n");
 }

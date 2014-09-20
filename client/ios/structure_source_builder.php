@@ -40,7 +40,7 @@ class StructureBuilder extends Builder
 			}
 		}
 
-		$this->output(__DIR__ . '/structure_builder.tpl');
+		$this->output(__DIR__ . '/structure_source_builder.tpl');
 	}
 }
 

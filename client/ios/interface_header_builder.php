@@ -25,7 +25,7 @@ class InterfaceBuilder extends Builder
 			$this->_doc[] = $interface;
 		}
 
-		$this->output(__DIR__ . '/interface_builder.tpl');
+		$this->output(__DIR__ . '/interface_header_builder.tpl');
 	}
 
 	private function _buildParams($xml){
