@@ -16,10 +16,13 @@
 		<param name="phone" type="STRING" validation="^1[3458][0-9]{9}$"/>
 		<param name="password" type="STRING" validation="^\\w{32}$"/>
 	</struct>
+	<struct name="user_register_extra">
+		<param name="aaa" type="STRING"/>
+	</struct>
 	<struct name="user_register_request">
 		<param name="type" type="INTEGER"/>
 		<param name="info" type="OBJECT" reference="user_info"/>
-		<param name="extra" type="ARRAY" reference="STRING"/>
+		<param name="extra" type="ARRAY" reference="user_register_extra"/>
 	</struct>
 	<struct name="user_register_response">
 		<param name="result" type="BOOL"/>

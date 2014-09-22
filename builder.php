@@ -126,9 +126,6 @@ class Builder
 				if(NULL == $param->reference)
 					continue;
 
-				if(strcmp($param->reference, strtoupper($param->reference)) == 0)
-					continue;
-
 				if(!isset($this->_knownStructs[$param->reference]))
 					throw new \Exception('refering to unknown struct ' . $param->reference . ' in [' . $struct->name . ']');
 			}

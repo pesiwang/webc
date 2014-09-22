@@ -1,10 +1,9 @@
 <?php
-require __DIR__ . '/lib/structures.class.php';
-require __DIR__ . '/lib/interfaces.class.php';
+require __DIR__ . '/lib/structs.class.php';
 class Bootstrap{
 	static public function run(){
-		$request = json_decode(($_SERVER['REQUEST_METHOD'] == 'GET') ? $_SERVER['QUERY_STRING'] : file_get_contents('php://input'));
-		if(!is_object($request)){
+		$json = json_decode(($_SERVER['REQUEST_METHOD'] == 'GET') ? $_SERVER['QUERY_STRING'] : file_get_contents('php://input'), true);
+		if(!is_array($json)){
 			die('Bad Request');
 			return;
 		}
@@ -13,8 +12,11 @@ class Bootstrap{
 		$requestInterfaceName = ltrim($parsedUrl['path'], '/');
 
 		$appFile = __DIR__ . '/app/' . preg_replace('/\\./', '/', $requestInterfaceName) . '.php';
-		$appClass = '\\' . ucfirst(preg_replace('/\\.([a-z])/ei', "strtoupper('\\1')", $requestInterfaceName));
-		$responseClass = '\\<%$server->namespace%>' . $appClass . 'Response';
+
+		$theClass = ucfirst(preg_replace('/\\.([a-z])/ei', "strtoupper('\\1')", $requestInterfaceName));
+		$appClass = '\\<%$server->namespace%>\\Application' . $theClass;
+		$requestClass = '\\<%$server->namespace%>\\Struct' . $theClass . 'Request';
+		$responseClass = '\\<%$server->namespace%>\\Struct' . $theClass . 'Response';
 
 		if(!file_exists($appFile)){
 			die('no such file:' . $appFile);
@@ -22,13 +24,21 @@ class Bootstrap{
 		}
 
 		require_once $appFile;
+		$request = new $requestClass();
 		$response = new $responseClass();
+
+		try{
+			$request->fromArray($json);
+		}
+		catch(Exception $e){
+			die('Invalid Struct: ' . $e->getMessage());
+		}
 
 		$app = new $appClass();
 		$app->run($request, $response);
 
 		header('Content-Type:text/plain;charset=utf-8');
-		echo json_encode($response);
+		echo json_encode($response->toArray());
 	}
 }
 
