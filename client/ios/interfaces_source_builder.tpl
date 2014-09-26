@@ -1,4 +1,5 @@
 #import "webc_interfaces.h"
+#import "ASIHTTPRequest.h"
 
 @interface <%$server->namespace|strtoupper%>Client()
 + (NSData *)_call:(NSString*)interface withRequest:(NSData*)request;
@@ -8,20 +9,28 @@
 
 + (NSData *)_call:(NSString*)interface withRequest:(NSData*)request
 {
-	NSMutableURLRequest* urlRequest = [[NSMutableURLRequest alloc] init];
-	[urlRequest setURL:[NSURL URLWithString:[NSString stringWithFormat:@"<%$server->protocol%>://<%$server->host%>:<%$server->port%>/%@", interface]]];
-	[urlRequest setHTTPMethod:@"POST"];
-	[urlRequest setHTTPBody:request];
-	[urlRequest setCachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData];
-	[urlRequest setTimeoutInterval:30.0];
-
-	NSHTTPURLResponse* httpResponse = nil;
-	NSError* error = nil;
-	NSData* responseData = [NSURLConnection sendSynchronousRequest:urlRequest returningResponse:&httpResponse error:&error];
-	if(error || !responseData)
+	ASIFormDataRequest *asiRequest = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"<%$server->protocol%>://<%$server->host%>:<%$server->port%>/%@", interface]]];
+	asiRequest.postBody = [NSMutableData dataWithData:request];
+	asiRequest.postLength = request.length;
+	[asiRequest startSynchronous];
+	if ([asiRequest error]) {
 		return nil;
-	
-	return responseData;
+	}
+	return asiRequest.responseData;
+}
+
++ (void)_invoke((NSString*)interface withRequest:(NSData*)request withResponseCallback:(void (^)(NSData* response))responseBlock
+{
+	__block ASIFormDataRequest *asiRequest = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"<%$server->protocol%>://<%$server->host%>:<%$server->port%>/%@", interface]]];
+	asiRequest.postBody = [NSMutableData dataWithData:request];
+	asiRequest.postLength = request.length;
+	[asiRequest setCompletionBlock:^{
+		responseBlock(asiRequest.responseData);
+	}];
+	[asiRequest setFailedBlock:^{
+		responseBlock(nil);
+	}];
+	[asiRequest startAsynchronous];
 }
 
 <%foreach $interfaces as $interface%>
@@ -34,10 +43,30 @@
 	NSError* error = nil;
 	<%$server->namespace|strtoupper%>Struct<%$interface->response|webc_name2camel%>* response = [[<%$server->namespace|strtoupper%>Struct<%$interface->response|webc_name2camel%> alloc] initWithData:responseData error:&error];
 
-	if(error || !responseData)
+	if(error || !response)
 		return nil;
 						
 	return response;
 }
 <%/foreach%>
+
++ (void)invoke<%$interface->name|webc_name2camel%>:(<%$server->namespace|strtoupper%>Struct<%$interface->request|webc_name2camel%>*)request withResponseCallback:(void (^)(<%$server->namespace|strtoupper%>Struct<%$interface->response|webc_name2camel%>* response))responseBlock
+{
+	[<%$server->namespace|strtoupper%>Client _invoke:@"<%$interface->name%>" withRequest:[[request toJSONString] dataUsingEncoding:NSUTF8StringEncoding] withResponseCallback:^(NSData* responseData){
+		if(!responseData){
+			responseBlock(nil);
+			return;
+		}
+
+		NSError* error = nil;
+		<%$server->namespace|strtoupper%>Struct<%$interface->response|webc_name2camel%>* response = [[<%$server->namespace|strtoupper%>Struct<%$interface->response|webc_name2camel%> alloc] initWithData:responseData error:&error];
+		if(error || !response){
+			responseBlock(nil);
+			return;
+		}
+
+		responseBlock(response);
+	}];
+}
+
 @end

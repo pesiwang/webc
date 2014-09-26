@@ -28,6 +28,8 @@ mkdir -p ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib
 
 php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} client/ios/structs_header_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc_structs.h
 php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} client/ios/structs_source_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc_structs.m
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} client/ios/errors_header_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc_errors.h
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} client/ios/errors_source_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc_errors.m
 php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} client/ios/interfaces_header_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc_interfaces.h
 php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} client/ios/interfaces_source_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc_interfaces.m
 echo "building done";

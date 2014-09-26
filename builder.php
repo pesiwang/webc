@@ -19,6 +19,13 @@ class ObjParam
 	public $reference;
 }
 
+class ObjError
+{
+	public $name;
+	public $code;
+	public $message;
+}
+
 class ObjStruct
 {
 	public $name;
@@ -36,6 +43,7 @@ class Builder
 {
 	private $_xml;
 	private $_server;
+	private $_errors;
 	private $_structs;
 	private $_interfaces;
 	private $_extra;
@@ -52,6 +60,7 @@ class Builder
 			throw new \Exception('bad xml file');
 
 		$this->_compileServer();
+		$this->_compileErrors();
 		$this->_compileStructs();
 		$this->_compileInterfaces();
 
@@ -61,6 +70,7 @@ class Builder
 		$smarty->right_delimiter = '%>';
 		$smarty->caching = false;
 		$smarty->assign('server', $this->_server);
+		$smarty->assign('errors', $this->_errors);
 		$smarty->assign('structs', $this->_structs);
 		$smarty->assign('interfaces', $this->_interfaces);
 		$smarty->assign('extra', $this->_extra);
@@ -84,6 +94,26 @@ class Builder
 		$this->_server->port = (int)($this->_xml->server->port);
 		$this->_server->protocol = (string)($this->_xml->server->protocol);
 		$this->_server->namespace = (string)($this->_xml->server->namespace);
+	}
+
+	private function _compileErrors(){
+		foreach($this->_xml->error as $item){
+			if(NULL == $item->attributes()->name){
+				throw new \Exception("no [name] attribute found in [error] block");
+			}
+			if(NULL == $item->attributes()->code){
+				throw new \Exception("no [code] attribute found in [error] block");
+			}
+			if(NULL == $item->attributes()->message){
+				throw new \Exception("no [message] attribute found in [error] block");
+			}
+
+			$error = new ObjError();
+			$error->name = (string)($item->attributes()->name);
+			$error->code = (int)($item->attributes()->code);
+			$error->message = (string)($item->attributes()->message);
+			$this->_errors[] = $error;
+		}
 	}
 
 	private function _compileStructs(){

@@ -2,6 +2,7 @@
 namespace <%$server->namespace%>;
 
 require_once __DIR__ . '/structs.class.php';
+require_once __DIR__ . '/errors.class.php';
 
 class Client
 {

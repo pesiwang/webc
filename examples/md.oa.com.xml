@@ -1,0 +1,37 @@
+<web>
+	<!--{第一部分,定义服务器配置}-->
+	<server>
+		<host>md.oa.com</host>
+		<port>80</port>
+		<protocol>http</protocol>
+		<namespace>md</namespace>
+	</server>
+
+	<!--{第二部分,定义错误分类}-->
+	<error name="ERROR_SUCC" code="0x0000" message="执行成功"/>
+	<error name="ERROR_SYS_INTERNAL" code="0x0001" message="系统正忙,请稍后再试"/>
+	<error name="ERROR_SYS_INPUT" code="0x0002" message="您输入的内容不正确,请重新输入"/>
+
+	<!--{第三部分,定义常见结构体}-->
+	<struct name="user_signup_request">
+		<param name="mobile" type="STRING" validation="^1[3458][0-9]{9}$"/>
+		<param name="password" type="STRING" validation="^[a-fA-F0-9]{32}$"/>
+		<param name="verify" type="STRING" validation="^[0-9]{4}$"/>
+	</struct>
+	<struct name="user_signup_response">
+		<param name="result" type="INTEGER"/>
+		<param name="uid" type="INTEGER"/>
+	</struct>
+	<struct name="user_signin_request">
+		<param name="mobile" type="STRING" validation="^1[3458][0-9]{9}$"/>
+		<param name="password" type="STRING" validation="^[a-fA-F0-9]{32}$"/>
+	</struct>
+	<struct name="user_signin_response">
+		<param name="result" type="INTEGER"/>
+		<param name="auth" type="STRING" validation="^[a-fA-F0-9]+$"/>
+	</struct>
+
+	<!--{第四部分,定义web接口列表}-->
+	<interface name="user.signup" request="user_signup_request" response="user_signup_response"/><!--用户注册-->
+	<interface name="user.signin" request="user_signin_request" response="user_signin_response"/><!--用户登录-->
+</web>
