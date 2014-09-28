@@ -110,7 +110,7 @@ class Builder
 
 			$error = new ObjError();
 			$error->name = (string)($item->attributes()->name);
-			$error->code = (int)($item->attributes()->code);
+			$error->code = (string)($item->attributes()->code);
 			$error->message = (string)($item->attributes()->message);
 			$this->_errors[] = $error;
 		}

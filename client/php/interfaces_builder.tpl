@@ -12,6 +12,8 @@ class Client
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($request->toArray()));
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,0); 
+		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 		$json = curl_exec($ch);
 		
 		$json = json_decode($json, true);

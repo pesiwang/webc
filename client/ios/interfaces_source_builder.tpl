@@ -1,5 +1,6 @@
 #import "webc_interfaces.h"
 #import "ASIHTTPRequest.h"
+#import "ASIFormDataRequest.h"
 
 @interface <%$server->namespace|strtoupper%>Client()
 + (NSData *)_call:(NSString*)interface withRequest:(NSData*)request;
@@ -12,6 +13,8 @@
 	ASIFormDataRequest *asiRequest = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"<%$server->protocol%>://<%$server->host%>:<%$server->port%>/%@", interface]]];
 	asiRequest.postBody = [NSMutableData dataWithData:request];
 	asiRequest.postLength = request.length;
+	asiRequest.timeOutSeconds = 30.0f;
+	asiRequest.cachePolicy = ASIDoNotWriteToCacheCachePolicy|ASIDoNotReadFromCacheCachePolicy;
 	[asiRequest startSynchronous];
 	if ([asiRequest error]) {
 		return nil;
@@ -19,11 +22,13 @@
 	return asiRequest.responseData;
 }
 
-+ (void)_invoke((NSString*)interface withRequest:(NSData*)request withResponseCallback:(void (^)(NSData* response))responseBlock
++ (void)_invoke:(NSString*)interface withRequest:(NSData*)request withResponseCallback:(void (^)(NSData* response))responseBlock
 {
 	__block ASIFormDataRequest *asiRequest = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"<%$server->protocol%>://<%$server->host%>:<%$server->port%>/%@", interface]]];
 	asiRequest.postBody = [NSMutableData dataWithData:request];
 	asiRequest.postLength = request.length;
+	asiRequest.timeOutSeconds = 30.0f;
+	asiRequest.cachePolicy = ASIDoNotWriteToCacheCachePolicy|ASIDoNotReadFromCacheCachePolicy;
 	[asiRequest setCompletionBlock:^{
 		responseBlock(asiRequest.responseData);
 	}];
