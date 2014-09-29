@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '/lib/structs.class.php';
+require __DIR__ . '/lib/webc/structs.class.php';
 define('PROJECT_ROOT', __DIR__);
 
 class Bootstrap{
