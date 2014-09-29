@@ -24,11 +24,11 @@ if [ -d ${V_TARGET_FOLDER}/${V_PROJECT_NAME} ]; then
 fi
 
 mkdir -p ${V_TARGET_FOLDER}/${V_PROJECT_NAME}
-mkdir -p ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib
+mkdir -p ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc/
 mkdir -p ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/app
 
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/server/php/structs_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/structs.class.php
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/server/php/errors_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/errors.class.php
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/server/php/structs_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc/structs.class.php
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/server/php/errors_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc/errors.class.php
 php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/server/php/bootstrap_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/bootstrap.php
 for V_APP_NAME in $(php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/helper/applications_dumper.tpl)
 do

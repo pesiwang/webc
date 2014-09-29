@@ -1,5 +1,7 @@
 <?php
 require __DIR__ . '/lib/structs.class.php';
+define('PROJECT_ROOT', __DIR__);
+
 class Bootstrap{
 	static public function run(){
 		$json = json_decode(($_SERVER['REQUEST_METHOD'] == 'GET') ? $_SERVER['QUERY_STRING'] : file_get_contents('php://input'), true);

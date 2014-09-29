@@ -24,9 +24,9 @@ if [ -d ${V_TARGET_FOLDER}/${V_PROJECT_NAME} ]; then
 fi
 
 mkdir -p ${V_TARGET_FOLDER}/${V_PROJECT_NAME}
-mkdir -p ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib
+mkdir -p ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc/
 
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} client/php/structs_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/structs.class.php
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} client/php/errors_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/errors.class.php
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} client/php/interfaces_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/interfaces.class.php
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/php/structs_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc/structs.class.php
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/php/errors_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc/errors.class.php
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/php/interfaces_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc/interfaces.class.php
 echo "building done";
