@@ -27,10 +27,10 @@ mkdir -p ${V_TARGET_FOLDER}/${V_PROJECT_NAME}
 mkdir -p ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib
 mkdir -p ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/app
 
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} server/php/structs_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/structs.class.php
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} server/php/errors_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/errors.class.php
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} server/php/bootstrap_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/bootstrap.php
-for V_APP_NAME in $(php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} helper/applications_dumper.tpl)
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/server/php/structs_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/structs.class.php
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/server/php/errors_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/errors.class.php
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/server/php/bootstrap_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/bootstrap.php
+for V_APP_NAME in $(php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/helper/applications_dumper.tpl)
 do
 	V_APP_PATH=$(dirname $(echo ${V_APP_NAME} | sed 's/\./\//g'))
 	V_APP_FILE=$(basename $(echo ${V_APP_NAME} | sed 's/\./\//g'))".php"
@@ -38,7 +38,7 @@ do
 	if [ -f ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/app/${V_APP_PATH}/${V_APP_FILE} ]; then
 		echo "skipping ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/app/${V_APP_PATH}/${V_APP_FILE}";
 	else
-		php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} server/php/application_builder.tpl ${V_APP_NAME} > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/app/${V_APP_PATH}/${V_APP_FILE}
+		php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/server/php/application_builder.tpl ${V_APP_NAME} > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/app/${V_APP_PATH}/${V_APP_FILE}
 	fi
 done
 echo "building done";
