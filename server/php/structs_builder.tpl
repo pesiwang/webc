@@ -67,6 +67,12 @@ class Struct<%$struct->name|webc_name2camel%> extends Struct
 		$this-><%$param->name%> = new Struct<%$param->reference|webc_name2camel%>();
 <%else if ($param->type=='ARRAY')%>
 		$this-><%$param->name%> = new Structs<%$param->reference|webc_name2camel%>();
+<%else if ($param->type=='STRING')%>
+		$this-><%$param->name%> = '';
+<%else if ($param->type=='BOOL')%>
+		$this-><%$param->name%> = false;
+<%else%>
+		$this-><%$param->name%> = 0;
 <%/if%>
 <%/foreach%>
 	}
