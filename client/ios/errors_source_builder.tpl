@@ -1,20 +1,24 @@
 #import "webc_errors.h"
 
-@implementation <%$server->namespace|strtoupper%>ErrorManager 
+@implementation <%$server->namespace|strtoupper%>Error
 - (id)initWithResult:(NSInteger)result withMessage:(NSString*)message{
-	_result = result;
-	_message = message;
-	if((result != 0) && (message != nil)){
-		switch(_result){
+	self = [super init];
+	if(self){
+		_result = result;
+		_message = message;
+		if((result != 0) && (message != nil)){
+			switch(_result){
 <%foreach $errors as $error%>
-			case <%$server->namespace|strtoupper%>_<%$error->name%>:
-				_message = @"<%$error->message%>";
-				break;
+				case <%$error->code%>:
+					_message = @"<%$error->message%>";
+					break;
 <%/foreach%>
-			default:
-				_message = @"未知错误";
-				break;
+				default:
+					_message = @"未知错误";
+					break;
+			}
 		}
 	}
+	return self;
 }
 @end

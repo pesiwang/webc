@@ -51,7 +51,7 @@
 	if (json == nil)
 		return [[<%$server->namespace|strtoupper%>Error alloc] initWithResult:-1 withMessage:@"bad data"];
 
-	NSInteger result = [[json objectForKey@"result"] integerValue];
+	NSInteger result = [[json objectForKey:@"result"] integerValue];
 
 	if(result != 0)
 		return [[<%$server->namespace|strtoupper%>Error alloc] initWithResult:-1 withMessage:nil];
