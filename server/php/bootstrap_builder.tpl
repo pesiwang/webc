@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . '/lib/webc/structs.class.php';
+require __DIR__ . '/lib/webc/errors.class.php';
 define('PROJECT_ROOT', __DIR__);
 
 class Bootstrap{
@@ -21,7 +22,7 @@ class Bootstrap{
 		$responseClass = '\\<%$server->namespace%>\\Struct' . $theClass . 'Response';
 
 		if(!file_exists($appFile)){
-			die('no such file:' . $appFile);
+			die('Internal Server Error');
 			return;
 		}
 
@@ -33,14 +34,19 @@ class Bootstrap{
 			$request->fromArray($json);
 		}
 		catch(Exception $e){
-			die('Invalid Struct: ' . $e->getMessage());
+			die('Bad Request');
 		}
 
 		$app = new $appClass();
-		$app->run($request, $response);
-
+		$result = $app->run($request, $response);
 		header('Content-Type:text/plain;charset=utf-8');
-		echo json_encode($response->toArray());
+
+		if($result == 0){
+			echo json_encode(array('result' => $result, 'payload' => $response->toArray()));
+		}
+		else{
+			echo json_encode(array('result' => $result));
+		}
 	}
 }
 

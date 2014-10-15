@@ -39,22 +39,32 @@
 }
 
 <%foreach $interfaces as $interface%>
-+ (<%$server->namespace|strtoupper%>Struct<%$interface->response|webc_name2camel%>*)call<%$interface->name|webc_name2camel%>:(<%$server->namespace|strtoupper%>Struct<%$interface->request|webc_name2camel%>*)request
++ (<%$server->namespace|strtoupper%>Error*)call<%$interface->name|webc_name2camel%>:(<%$server->namespace|strtoupper%>Struct<%$interface->request|webc_name2camel%>*)request withResponse:(<%$server->namespace|strtoupper%>Struct<%$interface->response|webc_name2camel%>**)response;
 {
 	NSData *responseData = [<%$server->namespace|strtoupper%>Client _call:@"<%$interface->name%>" withRequest:[[request toJSONString] dataUsingEncoding:NSUTF8StringEncoding]];
 	if(!responseData)
-		return nil;
-			
-	NSError* error = nil;
-	<%$server->namespace|strtoupper%>Struct<%$interface->response|webc_name2camel%>* response = [[<%$server->namespace|strtoupper%>Struct<%$interface->response|webc_name2camel%> alloc] initWithData:responseData error:&error];
+		return [[<%$server->namespace|strtoupper%>Error alloc] initWithResult:-1 withMessage:@"network failure"];
 
+
+	NSError* error = nil;
+	NSDictionary *json = [NSJSONSerialization JSONObjectWithData:responseData options:kNilOptions error:&error];
+	if (json == nil)
+		return [[<%$server->namespace|strtoupper%>Error alloc] initWithResult:-1 withMessage:@"bad data"];
+
+	NSInteger result = [[json objectForKey@"result"] integerValue];
+
+	if(result != 0)
+		return [[<%$server->namespace|strtoupper%>Error alloc] initWithResult:-1 withMessage:nil];
+
+	*response = [[<%$server->namespace|strtoupper%>Struct<%$interface->response|webc_name2camel%> alloc] initWithData:responseData error:&error];
 	if(error || !response)
-		return nil;
-						
-	return response;
+		return [[<%$server->namespace|strtoupper%>Error alloc] initWithResult:-1 withMessage:@"bad data"];
+
+	return [[<%$server->namespace|strtoupper%>Error alloc] initWithResult:0 withMessage:nil];
 }
 <%/foreach%>
 
+<%foreach $interfaces as $interface%>
 + (void)invoke<%$interface->name|webc_name2camel%>:(<%$server->namespace|strtoupper%>Struct<%$interface->request|webc_name2camel%>*)request withResponseCallback:(void (^)(<%$server->namespace|strtoupper%>Struct<%$interface->response|webc_name2camel%>* response))responseBlock
 {
 	[<%$server->namespace|strtoupper%>Client _invoke:@"<%$interface->name%>" withRequest:[[request toJSONString] dataUsingEncoding:NSUTF8StringEncoding] withResponseCallback:^(NSData* responseData){
@@ -73,5 +83,6 @@
 		responseBlock(response);
 	}];
 }
+<%/foreach%>
 
 @end

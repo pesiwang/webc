@@ -13,23 +13,12 @@ if [ ! -f ${V_SOURCE_XML} ]; then
 	exit 0
 fi
 
-V_PROJECT_NAME=$(basename ${V_SOURCE_XML} | sed 's/\.xml$//g')
+mkdir -p ${V_TARGET_FOLDER}
 
-if [ -d ${V_TARGET_FOLDER}/${V_PROJECT_NAME} ]; then
-	echo -n "${V_TARGET_FOLDER}/${V_PROJECT_NAME} already exists, replace it?(Y/N)"
-	read V_YESNO
-	if [ "${V_YESNO}" != "Y" ] && [ "${V_YESNO}" != "y" ]; then
-		exit 0;
-	fi
-fi
-
-mkdir -p ${V_TARGET_FOLDER}/${V_PROJECT_NAME}
-mkdir -p ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc
-
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/ios/structs_header_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc/webc_structs.h
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/ios/structs_source_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc/webc_structs.m
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/ios/errors_header_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc/webc_errors.h
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/ios/errors_source_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc/webc_errors.m
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/ios/interfaces_header_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc/webc_interfaces.h
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/ios/interfaces_source_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc/webc_interfaces.m
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/ios/structs_header_builder.tpl > ${V_TARGET_FOLDER}/webc_structs.h
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/ios/structs_source_builder.tpl > ${V_TARGET_FOLDER}/webc_structs.m
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/ios/errors_header_builder.tpl > ${V_TARGET_FOLDER}/webc_errors.h
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/ios/errors_source_builder.tpl > ${V_TARGET_FOLDER}/webc_errors.m
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/ios/interfaces_header_builder.tpl > ${V_TARGET_FOLDER}/webc_interfaces.h
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/ios/interfaces_source_builder.tpl > ${V_TARGET_FOLDER}/webc_interfaces.m
 echo "building done";

@@ -1,6 +1,10 @@
 <?php
 namespace <%$server->namespace%>;
 
+class Error
+{
+	const SUCC = 0x0000;
 <%foreach $errors as $error%>
-define(__NAMESPACE__ . '\<%$error->name%>', <%$error->code%>);
+	const <%$error->name%> = <%$error->code%>;
 <%/foreach%>
+}

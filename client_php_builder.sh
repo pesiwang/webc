@@ -13,20 +13,9 @@ if [ ! -f ${V_SOURCE_XML} ]; then
 	exit 0
 fi
 
-V_PROJECT_NAME=$(basename ${V_SOURCE_XML} | sed 's/\.xml$//g')
+mkdir -p ${V_TARGET_FOLDER}/
 
-if [ -d ${V_TARGET_FOLDER}/${V_PROJECT_NAME} ]; then
-	echo -n "${V_TARGET_FOLDER}/${V_PROJECT_NAME} already exists, replace it?(Y/N)"
-	read V_YESNO
-	if [ "${V_YESNO}" != "Y" ] && [ "${V_YESNO}" != "y" ]; then
-		exit 0;
-	fi
-fi
-
-mkdir -p ${V_TARGET_FOLDER}/${V_PROJECT_NAME}
-mkdir -p ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc/
-
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/php/structs_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc/structs.class.php
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/php/errors_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc/errors.class.php
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/php/interfaces_builder.tpl > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/lib/webc/interfaces.class.php
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/php/structs_builder.tpl > ${V_TARGET_FOLDER}/structs.class.php
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/php/errors_builder.tpl > ${V_TARGET_FOLDER}/errors.class.php
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/php/interfaces_builder.tpl > ${V_TARGET_FOLDER}/interfaces.class.php
 echo "building done";

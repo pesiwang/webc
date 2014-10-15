@@ -1,70 +1,50 @@
 <web>
 	<!--{第一部分,定义服务器配置}-->
 	<server>
-		<host>md.oa.com</host>
+		<host>td.oa.com</host>
 		<port>80</port>
 		<protocol>http</protocol>
-		<namespace>md</namespace>
+		<namespace>ml</namespace>
 	</server>
 
 	<!--{第二部分,定义错误分类}-->
 	<error name="ERROR_SUCC" code="0x0000" message="执行成功"/>
 	<error name="ERROR_SYS_INTERNAL" code="0x0001" message="系统正忙,请稍后再试"/>
 	<error name="ERROR_SYS_INPUT" code="0x0002" message="您输入的内容不正确,请重新输入"/>
+	<error name="ERROR_LOGIC_USER_ACCOUNT_EXISTED" code="0x0100" message="该账号已经被注册"/>
 
 	<!--{第三部分,定义常见结构体}-->
-	<struct name="user_properties">
-		<param name="id" type="STRING" validation="^[a-fA-F0-9]{32}$"/>
-		<param name="name" type="STRING" validation="^.{2,16}$"/>
+	<struct name="common_user_info">
+		<param name="name" type="STRING" validation="^.{1,16}$"/>
 		<param name="icon" type="STRING"/>
-		<param name="gender" type="INTEGER"/>
-		<param name="birthday" type="INTEGER"/>
-		<param name="city" type="STRING"/>
+		<param name="gender" type="INTEGER" validation="^[0|1]{1}$"/>
 	</struct>
 
 	<struct name="verify_fetch_request">
 		<param name="type" type="INTEGER" validation="^[0-9]$"/>
 	</struct>
 	<struct name="verify_fetch_response">
-		<param name="result" type="INTEGER"/>
-		<param name="verify" type="STRING" validation="^[0-9]{4}$"/>
+		<param name="code" type="STRING" validation="^[0-9]{4}$"/>
 	</struct>
-	<struct name="user_signup_request">
+	<struct name="user_register_request">
 		<param name="mobile" type="STRING" validation="^1[3458][0-9]{9}$"/>
 		<param name="password" type="STRING" validation="^[a-fA-F0-9]{32}$"/>
 		<param name="verify" type="STRING" validation="^[0-9]{4}$"/>
+		<param name="info" type="OBJECT" reference="common_user_info"/>
 	</struct>
-	<struct name="user_signup_response">
-		<param name="result" type="INTEGER"/>
-		<param name="uid" type="STRING" validation="^[a-fA-F0-9]{32}$"/>
+	<struct name="user_register_response">
+		<param name="uid" type="INTEGER"/>
 	</struct>
-	<struct name="user_signin_request">
+	<struct name="user_login_request">
 		<param name="mobile" type="STRING" validation="^1[3458][0-9]{9}$"/>
 		<param name="password" type="STRING" validation="^[a-fA-F0-9]{32}$"/>
 	</struct>
-	<struct name="user_signin_response">
-		<param name="result" type="INTEGER"/>
+	<struct name="user_login_response">
 		<param name="auth" type="STRING" validation="^[a-fA-F0-9]+$"/>
-	</struct>
-	<struct name="user_properties_update_request">
-		<param name="auth" type="STRING" validation="^[a-fA-F0-9]+$"/>
-		<param name="properties" type="OBJECT" reference="user_properties"/>
-	</struct>
-	<struct name="user_properties_update_response">
-		<param name="result" type="INTEGER"/>
-	</struct>
-	<struct name="user_random_list_request">
-		<param name="auth" type="STRING" validation="^[a-fA-F0-9]*$"/>
-	</struct>
-	<struct name="user_random_list_response">
-		<param name="result" type="INTEGER"/>
-		<param name="users" type="ARRAY" reference="user_properties"/>
 	</struct>
 
 	<!--{第四部分,定义web接口列表}-->
 	<interface name="verify.fetch" request="verify_fetch_request" response="verify_fetch_response"/><!--获取验证码-->
-	<interface name="user.signup" request="user_signup_request" response="user_signup_response"/><!--用户注册-->
-	<interface name="user.signin" request="user_signin_request" response="user_signin_response"/><!--用户登录-->
-	<interface name="user.properties.update" request="user_properties_update_request" response="user_properties_update_response"/><!--更新用户资料-->
-	<interface name="user.random.list" request="user_random_list_request" response="user_random_list_response"/><!--获取随机好友列表-->
+	<interface name="user.register" request="user_register_request" response="user_register_response"/><!--用户注册-->
+	<interface name="user.login" request="user_login_request" response="user_login_response"/><!--用户登录-->
 </web>
