@@ -51,6 +51,10 @@ class Structs extends Struct
 	public function fromArray($arr){
 		$this->_objects = $arr;
 	}
+
+	public function getObjects(){
+		return $this->_objects;
+	}
 }
 
 <%foreach $structs as $struct%>
