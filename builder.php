@@ -15,7 +15,6 @@ class ObjParam
 {
 	public $name;
 	public $type;       //OBJECT|ARRAY|INTEGER|BOOL|STRING
-	public $validation;
 	public $reference;
 }
 
@@ -138,7 +137,6 @@ class Builder
 				$param = new ObjParam();
 				$param->name = (string)($subItem->attributes()->name);
 				$param->type = (string)($subItem->attributes()->type);
-				$param->validation = (NULL != $subItem->attributes()->validation) ? (string)($subItem->attributes()->validation) : NULL;
 				$param->reference = (NULL != $subItem->attributes()->reference) ? (string)($subItem->attributes()->reference) : NULL;
 
 				if((($param->type == 'OBJECT') || ($param->type == 'ARRAY')) && ($param->reference == NULL))

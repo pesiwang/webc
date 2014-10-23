@@ -1,6 +1,6 @@
 #import "webc_structs.h"
-
 <%foreach $structs as $struct%>
+
 @implementation <%$server->namespace|strtoupper%>Struct<%$struct->name|webc_name2camel%>
 - (id)init{
 	self = [super init];

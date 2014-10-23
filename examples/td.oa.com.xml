@@ -15,32 +15,32 @@
 
 	<!--{第三部分,定义常见结构体}-->
 	<struct name="common_user_info">
-		<param name="name" type="STRING" validation="^.{1,16}$"/>
+		<param name="name" type="STRING"/>
 		<param name="icon" type="STRING"/>
-		<param name="gender" type="INTEGER" validation="^[0|1]{1}$"/>
+		<param name="gender" type="INTEGER"/>
 	</struct>
 
 	<struct name="verify_fetch_request">
-		<param name="type" type="INTEGER" validation="^[0-9]$"/>
+		<param name="type" type="INTEGER"/>
 	</struct>
 	<struct name="verify_fetch_response">
-		<param name="code" type="STRING" validation="^[0-9]{4}$"/>
+		<param name="code" type="STRING"/>
 	</struct>
 	<struct name="user_register_request">
-		<param name="mobile" type="STRING" validation="^1[3458][0-9]{9}$"/>
-		<param name="password" type="STRING" validation="^[a-fA-F0-9]{32}$"/>
-		<param name="verify" type="STRING" validation="^[0-9]{4}$"/>
+		<param name="mobile" type="STRING"/>
+		<param name="password" type="STRING"/>
+		<param name="verify" type="STRING"/>
 		<param name="info" type="OBJECT" reference="common_user_info"/>
 	</struct>
 	<struct name="user_register_response">
 		<param name="uid" type="INTEGER"/>
 	</struct>
 	<struct name="user_login_request">
-		<param name="mobile" type="STRING" validation="^1[3458][0-9]{9}$"/>
-		<param name="password" type="STRING" validation="^[a-fA-F0-9]{32}$"/>
+		<param name="mobile" type="STRING"/>
+		<param name="password" type="STRING"/>
 	</struct>
 	<struct name="user_login_response">
-		<param name="auth" type="STRING" validation="^[a-fA-F0-9]+$"/>
+		<param name="auth" type="STRING"/>
 	</struct>
 
 	<!--{第四部分,定义web接口列表}-->

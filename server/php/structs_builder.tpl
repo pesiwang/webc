@@ -80,17 +80,6 @@ class Struct<%$struct->name|webc_name2camel%> extends Struct
 <%/if%>
 <%/foreach%>
 	}
-<%foreach $struct->params as $param%>
-
-	public function set<%$param->name|webc_name2camel%>($<%$param->name%>){
-<%if isset($param->validation)%>
-		if(false === filter_var($<%$param->name%>, FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => '/<%$param->validation%>/'))))
-			throw new \Exception('validation failed on field [<%$param->name%>]');
-<%/if%>
-		$this-><%$param->name%> = $<%$param->name%>;
-		return $this;
-	}
-<%/foreach%>
 }
 
 class Structs<%$struct->name|webc_name2camel%> extends Structs
