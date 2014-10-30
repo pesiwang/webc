@@ -52,8 +52,12 @@ class Test
 					self::_printStruct($indent + 1, &$subValue);
 			else if(is_a($value, '\<%$server->namespace%>\Struct'))
 				self::_printStruct($indent + 1, &$value);
-			else
-				echo $struct->$key, "\n";
+			else{
+				if(is_bool($struct->$key))
+					echo $struct->$key ? "true\n" : "false\n";
+				else
+					echo $struct->$key, "\n";
+			}
 		}
 	}
 
@@ -66,13 +70,12 @@ class Test
 				$input = fscanf(self::$stdin, "%s\n");
 				if(is_array($input) && (count($input) > 0)){
 					$input = trim($input[0]);
-					$setFunc = 'set' . $key;
 					if(is_bool($value))
-						$struct->$setFunc((strcasecmp($input, 'false') == 0) ? false : true);
+						$struct->$key = (strcasecmp($input, 'false') == 0) ? false : true;
 					else if(is_int($value))
-						$struct->$setFunc(intval($input));
+						$struct->$key = intval($input);
 					else
-						$struct->$setFunc($input);
+						$struct->$key = $input;
 				}
 			}
 		}
