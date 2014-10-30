@@ -1,4 +1,4 @@
-#import "webc_structs.h"
+#import "WebcStructs.h"
 <%foreach $structs as $struct%>
 
 @implementation <%$server->namespace|strtoupper%>Struct<%$struct->name|webc_name2camel%>

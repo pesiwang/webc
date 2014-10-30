@@ -1,5 +1,5 @@
-#import "webc_structs.h"
-#import "webc_errors.h"
+#import "WebcStructs.h"
+#import "WebcErrors.h"
 
 @interface <%$server->namespace|strtoupper%>Client : NSObject
 <%foreach $interfaces as $interface%>

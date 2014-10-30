@@ -1,4 +1,4 @@
-#import "webc_errors.h"
+#import "WebcErrors.h"
 
 @implementation <%$server->namespace|strtoupper%>Error
 - (id)initWithResult:(NSInteger)result withMessage:(NSString*)message{

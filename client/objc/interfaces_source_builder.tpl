@@ -1,4 +1,4 @@
-#import "webc_interfaces.h"
+#import "WebcInterfaces.h"
 #import "ASIHTTPRequest.h"
 #import "ASIFormDataRequest.h"
 
