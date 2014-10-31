@@ -31,14 +31,17 @@ class Test
 		self::_prepareStruct(1, &$request);
 
 		echo "======================\033[01;33mRESPONSE\033[0m=======================\n";
+		$timeStart = microtime(true);
 		$error = Client::call<%$interface->name|webc_name2camel%>($request, &$response);
+		$timeEnd = microtime(true);
+		echo "TIMESPENT>\033[01;33m", ($timeEnd - $timeStart), "(sec)\033[0m\n";
 		if($error->getResult() == Error::SUCC){
-			echo ">\033[01;32mSUCC\033[0m\n";
+			echo "RESULT>\033[01;32mSUCC\033[0m\n";
 			echo 'Struct<%$interface->response|webc_name2camel%>', "\n";
 			self::_printStruct(1, &$response);
 		}
 		else{
-			echo ">\033[01;31mFAILED\033[0m\n";
+			echo "RESULT>\033[01;31mFAILED\033[0m\n";
 			echo $error->getResult(), ' - ', $error->getMessage(), "\n";
 		}
 	}
