@@ -10,9 +10,14 @@
 		self.<%$param->name%> = [[<%$server->namespace|strtoupper%>Struct<%$param->reference|webc_name2camel%> alloc] init];
 <%else if ($param->type=='ARRAY')%>
 		self.<%$param->name%> = (NSMutableArray<<%$server->namespace|strtoupper%>Struct<%$param->reference|webc_name2camel%>>*)[[NSMutableArray alloc] init];
+<%else if ($param->type=='STRING')%>
+		self.<%$param->name%> = @"";
+<%else if ($param->type=='BOOL')%>
+		self.<%$param->name%> = NO;
+<%else%>
+		self.<%$param->name%> = 0;
 <%/if%>
 <%/foreach%>
-
 	}
 	return self;
 }

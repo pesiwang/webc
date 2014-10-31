@@ -6,7 +6,7 @@
 	if(self){
 		_result = result;
 		_message = message;
-		if((result != 0) && (message != nil)){
+		if((result != 0) && (message == nil)){
 			switch(_result){
 <%foreach $errors as $error%>
 				case <%$error->code%>:

@@ -1,7 +1,7 @@
 <?php
+define('PROJECT_ROOT', __DIR__);
 require __DIR__ . '/lib/webc/structs.class.php';
 require __DIR__ . '/lib/webc/errors.class.php';
-define('PROJECT_ROOT', __DIR__);
 
 class Bootstrap{
 	static public function run(){

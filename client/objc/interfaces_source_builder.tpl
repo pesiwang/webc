@@ -37,14 +37,13 @@
 	}];
 	[asiRequest startAsynchronous];
 }
-
 <%foreach $interfaces as $interface%>
+
 + (<%$server->namespace|strtoupper%>Error*)call<%$interface->name|webc_name2camel%>:(<%$server->namespace|strtoupper%>Struct<%$interface->request|webc_name2camel%>*)request withResponse:(<%$server->namespace|strtoupper%>Struct<%$interface->response|webc_name2camel%>**)response;
 {
 	NSData *responseData = [<%$server->namespace|strtoupper%>Client _call:@"<%$interface->name%>" withRequest:[[request toJSONString] dataUsingEncoding:NSUTF8StringEncoding]];
 	if(!responseData)
 		return [[<%$server->namespace|strtoupper%>Error alloc] initWithResult:-1 withMessage:@"network failure"];
-
 
 	NSError* error = nil;
 	NSDictionary *json = [NSJSONSerialization JSONObjectWithData:responseData options:kNilOptions error:&error];
@@ -52,35 +51,45 @@
 		return [[<%$server->namespace|strtoupper%>Error alloc] initWithResult:-1 withMessage:@"bad data"];
 
 	NSInteger result = [[json objectForKey:@"result"] integerValue];
-
 	if(result != 0)
-		return [[<%$server->namespace|strtoupper%>Error alloc] initWithResult:-1 withMessage:nil];
+		return [[<%$server->namespace|strtoupper%>Error alloc] initWithResult:result withMessage:nil];
 
-	*response = [[<%$server->namespace|strtoupper%>Struct<%$interface->response|webc_name2camel%> alloc] initWithData:responseData error:&error];
+	NSDictionary* payload = [json objectForKey:@"payload"];
+	*response = [[<%$server->namespace|strtoupper%>Struct<%$interface->response|webc_name2camel%> alloc] initWithDictionary:payload error:&error];
 	if(error || !response)
 		return [[<%$server->namespace|strtoupper%>Error alloc] initWithResult:-1 withMessage:@"bad data"];
 
 	return [[<%$server->namespace|strtoupper%>Error alloc] initWithResult:0 withMessage:nil];
 }
-<%/foreach%>
 
-<%foreach $interfaces as $interface%>
-+ (void)invoke<%$interface->name|webc_name2camel%>:(<%$server->namespace|strtoupper%>Struct<%$interface->request|webc_name2camel%>*)request withResponseCallback:(void (^)(<%$server->namespace|strtoupper%>Struct<%$interface->response|webc_name2camel%>* response))responseBlock
++ (void)invoke<%$interface->name|webc_name2camel%>:(<%$server->namespace|strtoupper%>Struct<%$interface->request|webc_name2camel%>*)request withResponseCallback:(void (^)(<%$server->namespace|strtoupper%>Struct<%$interface->response|webc_name2camel%>* response, <%$server->namespace|strtoupper%>Error* error))responseBlock
 {
 	[<%$server->namespace|strtoupper%>Client _invoke:@"<%$interface->name%>" withRequest:[[request toJSONString] dataUsingEncoding:NSUTF8StringEncoding] withResponseCallback:^(NSData* responseData){
 		if(!responseData){
-			responseBlock(nil);
+			responseBlock(nil, [[<%$server->namespace|strtoupper%>Error alloc] initWithResult:-1 withMessage:@"network failure"]);
 			return;
 		}
 
 		NSError* error = nil;
-		<%$server->namespace|strtoupper%>Struct<%$interface->response|webc_name2camel%>* response = [[<%$server->namespace|strtoupper%>Struct<%$interface->response|webc_name2camel%> alloc] initWithData:responseData error:&error];
-		if(error || !response){
-			responseBlock(nil);
+		NSDictionary *json = [NSJSONSerialization JSONObjectWithData:responseData options:kNilOptions error:&error];
+		if (json == nil){
+			responseBlock(nil, [[<%$server->namespace|strtoupper%>Error alloc] initWithResult:-1 withMessage:@"bad data"]);
 			return;
 		}
-
-		responseBlock(response);
+								
+		NSInteger result = [[json objectForKey:@"result"] integerValue];
+		if(result != 0){
+			responseBlock(nil, [[<%$server->namespace|strtoupper%>Error alloc] initWithResult:result withMessage:nil]);
+			return;
+		}
+												
+		NSDictionary* payload = [json objectForKey:@"payload"];
+		<%$server->namespace|strtoupper%>Struct<%$interface->response|webc_name2camel%>* response = [[<%$server->namespace|strtoupper%>Struct<%$interface->response|webc_name2camel%> alloc] initWithDictionary:payload error:&error];
+		if(error || !response){
+			responseBlock(nil, [[<%$server->namespace|strtoupper%>Error alloc] initWithResult:-1 withMessage:@"bad data"]);
+			return;
+		}
+		responseBlock(response, [[<%$server->namespace|strtoupper%>Error alloc] initWithResult:0 withMessage:nil]);
 	}];
 }
 <%/foreach%>
