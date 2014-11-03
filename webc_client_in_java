@@ -1,0 +1,21 @@
+#!/bin/bash
+if [ $# -lt 2 ]; then
+	echo "usage: $0 <source.xml> <target_folder>"
+	exit 0
+fi
+
+V_SOURCE_XML=$1
+V_SCRIPT_FOLDER=$(cd "$(dirname "$0")"; pwd)
+V_TARGET_FOLDER=$2
+
+if [ ! -f ${V_SOURCE_XML} ]; then
+	echo "cannot open ${V_SOURCE_XML}";
+	exit 0
+fi
+
+mkdir -p ${V_TARGET_FOLDER}/
+
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/java/structs_builder.tpl > ${V_TARGET_FOLDER}/Struct.java
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/java/errors_builder.tpl > ${V_TARGET_FOLDER}/Error.java
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/java/interfaces_builder.tpl > ${V_TARGET_FOLDER}/Client.java
+echo "building done";

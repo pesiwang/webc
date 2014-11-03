@@ -24,13 +24,14 @@
 
 + (void)_invoke:(NSString*)interface withRequest:(NSData*)request withResponseCallback:(void (^)(NSData* response))responseBlock
 {
-	__block ASIFormDataRequest *asiRequest = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"<%$server->protocol%>://<%$server->host%>:<%$server->port%>/%@", interface]]];
+	ASIFormDataRequest* asiRequest = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"<%$server->protocol%>://<%$server->host%>:<%$server->port%>/%@", interface]]];
+	__block ASIFormDataRequest* _asiRequest = asiRequest;
 	asiRequest.postBody = [NSMutableData dataWithData:request];
 	asiRequest.postLength = request.length;
 	asiRequest.timeOutSeconds = 30.0f;
 	asiRequest.cachePolicy = ASIDoNotWriteToCacheCachePolicy|ASIDoNotReadFromCacheCachePolicy;
 	[asiRequest setCompletionBlock:^{
-		responseBlock(asiRequest.responseData);
+		responseBlock(_asiRequest.responseData);
 	}];
 	[asiRequest setFailedBlock:^{
 		responseBlock(nil);
