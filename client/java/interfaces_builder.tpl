@@ -33,12 +33,16 @@ public class Client{
 	}
 <%/foreach%>
 
-	static private void _invoke(String interfaceName, Struct request, Callback callback){
+	static private void _invoke(String interfaceName, Struct request, final Callback callback){
 		RequestConfig config = RequestConfig.custom().setSocketTimeout(30000).setConnectionRequestTimeout(30000).build();
 		CloseableHttpAsyncClient client = HttpAsyncClients.custom().setDefaultRequestConfig(config).build();
 		HttpPost post = new HttpPost("<%$server->protocol%>://<%$server->host%>:<%$server->port%>/" + interfaceName);
 
 		try {
+			if(!request.checkIntegrity()){
+				callback.onFailure(new Error(-1, "bad request"));
+				return;
+			}
 			post.setEntity(new StringEntity(gson.toJson(request)));
 		} catch (UnsupportedEncodingException e) {
 			callback.onFailure(new Error(-1, "bad request"));
@@ -49,7 +53,7 @@ public class Client{
 				@Override
 				public void cancelled() {
 					callback.onFailure(new Error(-1, "request cancelled"));
-					}
+				}
 
 				@Override
 				public void completed(HttpResponse response) {
@@ -85,7 +89,7 @@ public class Client{
 			@Override
 			public void onSuccess(JsonObject json) {
 				Struct.<%$interface->response|webc_name2camel%> response = gson.fromJson(json, Struct.<%$interface->response|webc_name2camel%>.class);
-				if(response == null){
+				if((response == null) || !response.checkIntegrity()){
 					callback.onFailure(new Error(-1, "corrupted data(protocol mismatch)"));
 					return;
 				}
