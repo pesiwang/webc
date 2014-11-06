@@ -10,7 +10,7 @@
 
 + (NSData *)_call:(NSString*)interface withRequest:(NSData*)request
 {
-	ASIFormDataRequest *asiRequest = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"<%$server->protocol%>://<%$server->host%>:<%$server->port%>/%@", interface]]];
+	ASIFormDataRequest *asiRequest = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"<%$server->protocol%>://<%$server->host%>:<%$server->port%>/%@/<%$version%>", interface]]];
 	asiRequest.postBody = [NSMutableData dataWithData:request];
 	asiRequest.postLength = request.length;
 	asiRequest.timeOutSeconds = 30.0f;
@@ -24,7 +24,7 @@
 
 + (void)_invoke:(NSString*)interface withRequest:(NSData*)request withResponseCallback:(void (^)(NSData* response))responseBlock
 {
-	ASIFormDataRequest* asiRequest = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"<%$server->protocol%>://<%$server->host%>:<%$server->port%>/%@", interface]]];
+	ASIFormDataRequest* asiRequest = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"<%$server->protocol%>://<%$server->host%>:<%$server->port%>/%@/<%$version%>", interface]]];
 	__block ASIFormDataRequest* _asiRequest = asiRequest;
 	asiRequest.postBody = [NSMutableData dataWithData:request];
 	asiRequest.postLength = request.length;

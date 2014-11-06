@@ -14,10 +14,11 @@ if [ ! -f ${V_SOURCE_XML} ]; then
 fi
 
 mkdir -p ${V_TARGET_FOLDER}/lib
+V_VERSION=$(basename ${V_SOURCE_XML} | sed 's/\.xml$//g' | awk -F"." '{print $2}')
 
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/php/structs_builder.tpl > ${V_TARGET_FOLDER}/lib/structs.class.php
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/php/errors_builder.tpl > ${V_TARGET_FOLDER}/lib/errors.class.php
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/php/interfaces_builder.tpl > ${V_TARGET_FOLDER}/lib/interfaces.class.php
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/php/structs_builder.tpl ${V_VERSION} > ${V_TARGET_FOLDER}/lib/structs.class.php
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/php/errors_builder.tpl ${V_VERSION} > ${V_TARGET_FOLDER}/lib/errors.class.php
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/php/interfaces_builder.tpl ${V_VERSION} > ${V_TARGET_FOLDER}/lib/interfaces.class.php
 
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/test/php/test_builder.tpl > ${V_TARGET_FOLDER}/test.php
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/test/php/test_builder.tpl ${V_VERSION} > ${V_TARGET_FOLDER}/test.php
 echo "building done";

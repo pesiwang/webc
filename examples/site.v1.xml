@@ -1,0 +1,53 @@
+<web>
+	<!--{第一部分,定义服务器配置}-->
+	<server>
+		<host>td.oa.com</host>
+		<port>80</port>
+		<protocol>http</protocol>
+		<namespace>ml</namespace>
+	</server>
+
+	<!--{第二部分,定义错误分类}-->
+	<error name="ERROR_SUCC" code="0x0000" message="执行成功"/>
+	<error name="ERROR_SYS_INTERNAL" code="0x0001" message="系统正忙,请稍后再试"/>
+	<error name="ERROR_SYS_INPUT" code="0x0002" message="您输入的内容不正确,请重新输入"/>
+	<error name="ERROR_LOGIC_USER_ACCOUNT_EXISTED" code="0x0100" message="该账号已经被注册"/>
+
+	<!--{第三部分,定义常见结构体}-->
+	<struct name="common_user_info">
+		<param name="name" type="STRING"/>
+		<param name="icon" type="STRING"/>
+		<param name="gender" type="INTEGER"/>
+	</struct>
+	<struct name="fuckme">
+		<param name="ccc" type="INTEGER"/>
+	</struct>
+
+	<struct name="verify_fetch_request">
+		<param name="type" type="INTEGER"/>
+	</struct>
+	<struct name="verify_fetch_response">
+		<param name="code" type="STRING"/>
+	</struct>
+	<struct name="user_register_request">
+		<param name="mobile" type="STRING"/>
+		<param name="password" type="STRING"/>
+		<param name="verify" type="STRING"/>
+		<param name="info" type="OBJECT" reference="common_user_info"/>
+	</struct>
+	<struct name="user_register_response">
+		<param name="uid" type="INTEGER"/>
+	</struct>
+	<struct name="user_login_request">
+		<param name="mobile" type="STRING"/>
+		<param name="password" type="STRING"/>
+	</struct>
+	<struct name="user_login_response">
+		<param name="auth" type="STRING"/>
+	</struct>
+
+	<!--{第四部分,定义web接口列表}-->
+	<interface name="verify.fetch" request="verify_fetch_request" response="verify_fetch_response"/><!--获取验证码-->
+	<interface name="user.register" request="user_register_request" response="user_register_response"/><!--用户注册-->
+	<interface name="user.login" request="user_login_request" response="user_login_response"/><!--用户登录-->
+</web>

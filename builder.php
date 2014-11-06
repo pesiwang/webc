@@ -29,6 +29,7 @@ class ObjStruct
 {
 	public $name;
 	public $params;
+	public $isRefered;
 }
 
 class ObjInterface
@@ -45,11 +46,13 @@ class Builder
 	private $_errors;
 	private $_structs;
 	private $_interfaces;
+	private $_version
 	private $_extra;
 
 	private $_knownStructs;
 
-	public function __construct($extra){
+	public function __construct($version, $extra){
+		$this->_version = $version;
 		$this->_extra = $extra;
 	}
 
@@ -62,6 +65,7 @@ class Builder
 		$this->_compileErrors();
 		$this->_compileStructs();
 		$this->_compileInterfaces();
+		$this->_clearUnreferedStructs();
 
 		$smarty = new \Smarty();
 		$smarty->compile_dir = '/tmp';
@@ -72,6 +76,7 @@ class Builder
 		$smarty->assign('errors', $this->_errors);
 		$smarty->assign('structs', $this->_structs);
 		$smarty->assign('interfaces', $this->_interfaces);
+		$smarty->assign('version', $this->_version);
 		$smarty->assign('extra', $this->_extra);
 		$smarty->display($tplFile);
 	}
@@ -127,6 +132,7 @@ class Builder
 			$struct = new ObjStruct();
 			$struct->name = (string)($item->attributes()->name);
 			$struct->params = array();
+			$struct->isRefered = false;
 
 			foreach($item->param as $subItem){
 				if(NULL == $subItem->attributes()->name)
@@ -145,17 +151,18 @@ class Builder
 				$struct->params[] = $param;
 			}
 
-			$this->_structs[] = $struct;
+			$this->_structs[$struct->name] = $struct;
 			$this->_knownStructs[$struct->name] = 1;
 		}
 
-		foreach($this->_structs as $struct){
+		foreach($this->_structs as &$struct){
 			foreach($struct->params as $param){
 				if(NULL == $param->reference)
 					continue;
 
 				if(!isset($this->_knownStructs[$param->reference]))
 					throw new \Exception('refering to unknown struct ' . $param->reference . ' in [' . $struct->name . ']');
+				$this->_structs[$param->reference]->isRefered = true;
 			}
 		}
 	}
@@ -174,18 +181,27 @@ class Builder
 				throw new \Exception('refering to unknown struct ' . $interface->request);
 			if(!isset($this->_knownStructs[$interface->response]))
 				throw new \Exception('refering to unknown struct ' . $interface->response);
+			$this->_structs[$interface->request]->isRefered = true;
+			$this->_structs[$interface->response]->isRefered = true;
 
 			$this->_interfaces[] = $interface;
 		}
 	}
+
+	private function _clearUnreferedStructs(){
+		foreach($this->_structs as $key => &$struct){
+			if(!$struct->isRefered)
+				unset($this->_structs[$key]);
+		}
+	}
 }
 
-if($argc < 3)
-	die("usage: php " . $argv[0] . " <xml> <tpl>\n");
+if($argc < 4)
+	die("usage: php " . $argv[0] . " <xml> <tpl> <version>\n");
 
 try{
-	$extra = ($argc > 3) ? $argv[3] : null;
-	$builder = new Builder($extra);
+	$extra = ($argc > 4) ? $argv[4] : null;
+	$builder = new Builder($version, $extra);
 	$builder->compile($argv[1], $argv[2]);
 }
 catch(\Exception $e){

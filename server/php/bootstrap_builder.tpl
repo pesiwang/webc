@@ -1,7 +1,5 @@
 <?php
 define('PROJECT_ROOT', __DIR__);
-require __DIR__ . '/lib/webc/structs.class.php';
-require __DIR__ . '/lib/webc/errors.class.php';
 
 class Bootstrap{
 	static public function run(){
@@ -12,9 +10,18 @@ class Bootstrap{
 		}
 
 		$parsedUrl = parse_url($_SERVER['REQUEST_URI']);
-		$requestInterfaceName = ltrim($parsedUrl['path'], '/');
+		$pathInfos = explode('/', ltrim($parsedUrl['path'], '/'));
+		if(!is_array($pathInfos) || (count($pathInfos) != 2)){
+			die('Bad Request');
+			return;
+		}
+		$version = $pathInfos[0];
+		$requestInterfaceName = $pathInfos[1];
 
-		$appFile = __DIR__ . '/app/' . preg_replace('/\\./', '/', $requestInterfaceName) . '.php';
+		require __DIR__ . '/lib/webc/' . $version . '/structs.class.php';
+		require __DIR__ . '/lib/webc/' . $version . '/errors.class.php';
+
+		$appFile = __DIR__ . '/app/' . $version . '/' . preg_replace('/\\./', '/', $requestInterfaceName) . '.php';
 
 		$theClass = ucfirst(preg_replace('/\\.([a-z])/ei', "strtoupper('\\1')", $requestInterfaceName));
 		$appClass = '\\<%$server->namespace%>\\Application' . $theClass;

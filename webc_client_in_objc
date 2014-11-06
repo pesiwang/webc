@@ -15,10 +15,12 @@ fi
 
 mkdir -p ${V_TARGET_FOLDER}
 
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/objc/structs_header_builder.tpl > ${V_TARGET_FOLDER}/WebcStructs.h
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/objc/structs_source_builder.tpl > ${V_TARGET_FOLDER}/WebcStructs.m
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/objc/errors_header_builder.tpl > ${V_TARGET_FOLDER}/WebcErrors.h
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/objc/errors_source_builder.tpl > ${V_TARGET_FOLDER}/WebcErrors.m
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/objc/interfaces_header_builder.tpl > ${V_TARGET_FOLDER}/WebcInterfaces.h
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/objc/interfaces_source_builder.tpl > ${V_TARGET_FOLDER}/WebcInterfaces.m
+V_VERSION=$(basename ${V_SOURCE_XML} | sed 's/\.xml$//g' | awk -F"." '{print $2}')
+
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/objc/structs_header_builder.tpl ${V_VERSION} > ${V_TARGET_FOLDER}/WebcStructs.h
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/objc/structs_source_builder.tpl ${V_VERSION} > ${V_TARGET_FOLDER}/WebcStructs.m
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/objc/errors_header_builder.tpl ${V_VERSION} > ${V_TARGET_FOLDER}/WebcErrors.h
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/objc/errors_source_builder.tpl ${V_VERSION} > ${V_TARGET_FOLDER}/WebcErrors.m
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/objc/interfaces_header_builder.tpl ${V_VERSION} > ${V_TARGET_FOLDER}/WebcInterfaces.h
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/objc/interfaces_source_builder.tpl ${V_VERSION} > ${V_TARGET_FOLDER}/WebcInterfaces.m
 echo "building done";

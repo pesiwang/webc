@@ -15,7 +15,9 @@ fi
 
 mkdir -p ${V_TARGET_FOLDER}/
 
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/java/structs_builder.tpl > ${V_TARGET_FOLDER}/Struct.java
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/java/errors_builder.tpl > ${V_TARGET_FOLDER}/Error.java
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/java/interfaces_builder.tpl > ${V_TARGET_FOLDER}/Client.java
+V_VERSION=$(basename ${V_SOURCE_XML} | sed 's/\.xml$//g' | awk -F"." '{print $2}')
+
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/java/structs_builder.tpl ${V_VERSION} > ${V_TARGET_FOLDER}/Struct.java
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/java/errors_builder.tpl ${V_VERSION} > ${V_TARGET_FOLDER}/Error.java
+php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/client/java/interfaces_builder.tpl ${V_VERSION} > ${V_TARGET_FOLDER}/Client.java
 echo "building done";

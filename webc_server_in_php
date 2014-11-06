@@ -1,24 +1,42 @@
 #!/bin/bash
 if [ $# -lt 2 ]; then
-	echo "usage: $0 <source.xml> <target_folder>"
+	echo "usage: $0 <source_folder> <target_folder>"
 	exit 0
 fi
 
-V_SOURCE_XML=$1
+V_SOURCE_FOLDER=$1
 V_SCRIPT_FOLDER=$(cd "$(dirname "$0")"; pwd)
 V_TARGET_FOLDER=$2
 
-if [ ! -f ${V_SOURCE_XML} ]; then
-	echo "cannot open ${V_SOURCE_XML}";
+if [ ! -d ${V_SCRIPT_FOLDER} ]; then
+	echo "cannot open ${V_SOURCE_FOLDER}";
 	exit 0
 fi
 
 mkdir -p ${V_TARGET_FOLDER}/
-mkdir -p ${V_TARGET_FOLDER}/lib/webc/
-mkdir -p ${V_TARGET_FOLDER}/app
+for V_SOURCE_XML in `ls ${V_SOURCE_FOLDER}/*.xml`
+do
+	V_VERSION=$(basename ${V_SOURCE_XML} | sed 's/\.xml$//g' | awk -F"." '{print $2}')
 
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/server/php/structs_builder.tpl > ${V_TARGET_FOLDER}/lib/webc/structs.class.php
-php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/server/php/errors_builder.tpl > ${V_TARGET_FOLDER}/lib/webc/errors.class.php
+	mkdir -p ${V_TARGET_FOLDER}/lib/webc/${V_VERSION}
+	mkdir -p ${V_TARGET_FOLDER}/app/${V_VERSION}
+
+	php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/server/php/structs_builder.tpl ${V_VERSION} > ${V_TARGET_FOLDER}/lib/webc/${V_VERSION}/structs.class.php
+	php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/server/php/errors_builder.tpl ${V_VERSION} > ${V_TARGET_FOLDER}/lib/webc/${V_VERSION}/errors.class.php
+
+	for V_APP_NAME in $(php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/helper/interfaces_enumerator.tpl ${V_VERSION})
+	do
+		V_APP_PATH=$(dirname $(echo ${V_APP_NAME} | sed 's/\./\//g'))
+		V_APP_FILE=$(basename $(echo ${V_APP_NAME} | sed 's/\./\//g'))".php"
+		mkdir -p ${V_TARGET_FOLDER}/app/${V_VERSION}/${V_APP_PATH}
+		if [ -f ${V_TARGET_FOLDER}/app/${V_VERSION}/${V_APP_PATH}/${V_APP_FILE} ]; then
+			echo "skipping ${V_TARGET_FOLDER}/app/${V_VERSION}/${V_APP_PATH}/${V_APP_FILE}";
+		else
+			php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/server/php/application_builder.tpl ${V_VERSION} ${V_APP_NAME} > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/app/${V_VERSION}/${V_APP_PATH}/${V_APP_FILE}
+		fi
+	done
+done
+
 
 YESNO="Y"
 if [ -f ${V_TARGET_FOLDER}/bootstrap.php ]; then
@@ -26,18 +44,7 @@ if [ -f ${V_TARGET_FOLDER}/bootstrap.php ]; then
 	read YESNO
 fi
 if [ "$YESNO" == "Y" ] || [ "$YESNO" == "y" ]; then
-	php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/server/php/bootstrap_builder.tpl > ${V_TARGET_FOLDER}/bootstrap.php
+	php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/server/php/bootstrap_builder.tpl ${V_VERSION} > ${V_TARGET_FOLDER}/bootstrap.php
 fi
 	
-for V_APP_NAME in $(php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/helper/interfaces_enumerator.tpl)
-do
-	V_APP_PATH=$(dirname $(echo ${V_APP_NAME} | sed 's/\./\//g'))
-	V_APP_FILE=$(basename $(echo ${V_APP_NAME} | sed 's/\./\//g'))".php"
-	mkdir -p ${V_TARGET_FOLDER}/app/${V_APP_PATH}
-	if [ -f ${V_TARGET_FOLDER}/app/${V_APP_PATH}/${V_APP_FILE} ]; then
-		echo "skipping ${V_TARGET_FOLDER}/app/${V_APP_PATH}/${V_APP_FILE}";
-	else
-		php ${V_SCRIPT_FOLDER}/builder.php ${V_SOURCE_XML} ${V_SCRIPT_FOLDER}/server/php/application_builder.tpl ${V_APP_NAME} > ${V_TARGET_FOLDER}/${V_PROJECT_NAME}/app/${V_APP_PATH}/${V_APP_FILE}
-	fi
-done
 echo "building done";

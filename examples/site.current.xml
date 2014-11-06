@@ -19,6 +19,9 @@
 		<param name="icon" type="STRING"/>
 		<param name="gender" type="INTEGER"/>
 	</struct>
+	<struct name="fuckme">
+		<param name="ccc" type="INTEGER"/>
+	</struct>
 
 	<struct name="verify_fetch_request">
 		<param name="type" type="INTEGER"/>
