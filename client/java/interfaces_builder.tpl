@@ -36,7 +36,7 @@ public class Client{
 	static private void _invoke(String interfaceName, Struct request, final Callback callback){
 		RequestConfig config = RequestConfig.custom().setSocketTimeout(30000).setConnectionRequestTimeout(30000).build();
 		CloseableHttpAsyncClient client = HttpAsyncClients.custom().setDefaultRequestConfig(config).build();
-		HttpPost post = new HttpPost("<%$server->protocol%>://<%$server->host%>:<%$server->port%>/" + interfaceName + "/<%$version%>");
+		HttpPost post = new HttpPost("<%$server->protocol%>://<%$server->host%>:<%$server->port%>/<%$version%>/" + interfaceName);
 
 		try {
 			if(!request.checkIntegrity()){

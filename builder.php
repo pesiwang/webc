@@ -46,7 +46,7 @@ class Builder
 	private $_errors;
 	private $_structs;
 	private $_interfaces;
-	private $_version
+	private $_version;
 	private $_extra;
 
 	private $_knownStructs;
@@ -201,7 +201,7 @@ if($argc < 4)
 
 try{
 	$extra = ($argc > 4) ? $argv[4] : null;
-	$builder = new Builder($version, $extra);
+	$builder = new Builder($argv[3], $extra);
 	$builder->compile($argv[1], $argv[2]);
 }
 catch(\Exception $e){

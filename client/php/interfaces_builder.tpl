@@ -8,7 +8,7 @@ class Client
 {
 	static protected function _call($interface, Struct $request, Struct &$response){
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, "<%$server->protocol%>://<%$server->host%>:<%$server->port%>/" . $interface . "/<%$version%>");
+		curl_setopt($ch, CURLOPT_URL, "<%$server->protocol%>://<%$server->host%>:<%$server->port%>/<%$version%>/" . $interface);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($request->toArray()));
