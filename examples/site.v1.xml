@@ -4,7 +4,6 @@
 		<host>td.oa.com</host>
 		<port>80</port>
 		<protocol>http</protocol>
-		<namespace>ml</namespace>
 	</server>
 
 	<!--{第二部分,定义错误分类}-->

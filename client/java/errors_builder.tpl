@@ -1,4 +1,4 @@
-package com.vanchu.libs.webc.<%$server->namespace%>;
+package com.vanchu.libs.webc;
 
 public class Error
 {

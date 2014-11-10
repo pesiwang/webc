@@ -1,6 +1,6 @@
 #import "WebcErrors.h"
 
-@implementation <%$server->namespace|strtoupper%>Error
+@implementation WebcError
 - (id)initWithResult:(NSInteger)result withMessage:(NSString*)message{
 	self = [super init];
 	if(self){

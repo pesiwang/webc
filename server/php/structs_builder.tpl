@@ -1,12 +1,12 @@
 <?php
-namespace <%$server->namespace%>;
+namespace webc;
 
 class Struct
 {
 	public function toArray(){
 		$arr = array();
 		foreach($this as $k => $v){
-			if(is_a($v, '\\<%$server->namespace%>\\Struct'))
+			if(is_a($v, '\\webc\\Struct'))
 				$arr[$k] = $v->toArray();
 			else
 				$arr[$k] = $v;
@@ -19,7 +19,7 @@ class Struct
 		foreach($this as $k => &$v){
 			if(!isset($arr[$k]))
 				throw new \Exception("field($k) not found");
-			if(is_a($v, '\\<%$server->namespace%>\\Struct'))
+			if(is_a($v, '\\webc\\Struct'))
 				$v->fromArray($arr[$k]);
 			else
 				$v = $arr[$k];
@@ -38,7 +38,7 @@ class Structs extends Struct
 	public function toArray(){
 		$arr = array();
 		foreach($this->_objects as $v){
-			if(is_a($v, '\\<%$server->namespace%>\\Struct')){
+			if(is_a($v, '\\webc\\Struct')){
 				$arr[] = $v->toArray();
 			}
 			else{

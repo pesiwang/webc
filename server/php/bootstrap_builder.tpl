@@ -24,9 +24,9 @@ class Bootstrap{
 		$appFile = __DIR__ . '/app/' . $version . '/' . preg_replace('/\\./', '/', $requestInterfaceName) . '.php';
 
 		$theClass = ucfirst(preg_replace('/\\.([a-z])/ei', "strtoupper('\\1')", $requestInterfaceName));
-		$appClass = '\\<%$server->namespace%>\\Application' . $theClass;
-		$requestClass = '\\<%$server->namespace%>\\Struct' . $theClass . 'Request';
-		$responseClass = '\\<%$server->namespace%>\\Struct' . $theClass . 'Response';
+		$appClass = '\\webc\\Application' . $theClass;
+		$requestClass = '\\webc\\Struct' . $theClass . 'Request';
+		$responseClass = '\\webc\\Struct' . $theClass . 'Response';
 
 		if(!file_exists($appFile)){
 			die('Internal Server Error');

@@ -1,4 +1,4 @@
-package com.vanchu.libs.webc.<%$server->namespace%>;
+package com.vanchu.libs.webc;
 
 public abstract class Struct{
 	public abstract Boolean checkIntegrity();

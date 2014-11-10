@@ -8,7 +8,6 @@ class ObjServer
 	public $host;
 	public $port;
 	public $protocol;
-	public $namespace;
 }
 
 class ObjParam
@@ -90,14 +89,11 @@ class Builder
 			throw new \Exception("no [port] node found in [server] block");
 		if($this->_xml->server->protocol == NULL)
 			throw new \Exception("no [protocol] node found in [server] block");
-		if($this->_xml->server->namespace == NULL)
-			throw new \Exception("no [namespace] node found in [server] block");
 
 		$this->_server = new ObjServer();
 		$this->_server->host = (string)($this->_xml->server->host);
 		$this->_server->port = (int)($this->_xml->server->port);
 		$this->_server->protocol = (string)($this->_xml->server->protocol);
-		$this->_server->namespace = (string)($this->_xml->server->namespace);
 	}
 
 	private function _compileErrors(){

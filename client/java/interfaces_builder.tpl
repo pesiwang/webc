@@ -1,4 +1,4 @@
-package com.vanchu.libs.webc.<%$server->namespace%>;
+package com.vanchu.libs.webc;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

@@ -1,5 +1,5 @@
 <?php
-function smarty_modifier_webc_to_objc_class($string, $namespace, $pointer = true)
+function smarty_modifier_webc_to_objc_class($string, $pointer = true)
 {
 	switch($string){
 		case 'STRING':
@@ -12,7 +12,7 @@ function smarty_modifier_webc_to_objc_class($string, $namespace, $pointer = true
 			return 'BOOL';
 			break;
 		default:
-			return strtoupper($namespace) . 'Struct' . ucfirst(preg_replace('/_([a-z])/ei', "strtoupper('\\1')", $string)) . ($pointer ? '*' : '');
+			return 'WebcStruct' . ucfirst(preg_replace('/_([a-z])/ei', "strtoupper('\\1')", $string)) . ($pointer ? '*' : '');
 			break;
 	}
 }

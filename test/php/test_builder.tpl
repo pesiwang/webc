@@ -1,5 +1,5 @@
 <?php
-namespace <%$server->namespace%>;
+namespace webc;
 require_once __DIR__ . '/lib/interfaces.class.php';
 
 class Test
@@ -50,10 +50,10 @@ class Test
 	static private function _printStruct($indent, Struct &$struct){
 		foreach($struct as $key => &$value){
 			self::_printInputPrompt($indent, $key, $value);
-			if(is_a($value, '\<%$server->namespace%>\Structs'))
+			if(is_a($value, '\webc\Structs'))
 				foreach($value->getObjects() as $subValue)
 					self::_printStruct($indent + 1, &$subValue);
-			else if(is_a($value, '\<%$server->namespace%>\Struct'))
+			else if(is_a($value, '\webc\Struct'))
 				self::_printStruct($indent + 1, &$value);
 			else{
 				if(is_bool($struct->$key))
@@ -67,7 +67,7 @@ class Test
 	static private function _prepareStruct($indent, Struct &$struct){
 		foreach($struct as $key => &$value){
 			self::_printInputPrompt($indent, $key, $value);
-			if(is_a($value, '\<%$server->namespace%>\Struct'))
+			if(is_a($value, '\webc\Struct'))
 				self::_prepareStruct($indent + 1, &$value);
 			else{
 				$input = fscanf(self::$stdin, "%s\n");
@@ -89,7 +89,7 @@ class Test
 			echo '   ';
 		echo '|--', $key;
 
-		if(is_a($value, '\<%$server->namespace%>\Struct'))
+		if(is_a($value, '\webc\Struct'))
 			echo '(OBJECT)', "\n";
 		else if(is_bool($value))
 			echo '(BOOL):';

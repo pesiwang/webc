@@ -1,5 +1,5 @@
 <?php
-namespace <%$server->namespace%>;
+namespace webc;
 
 class Error
 {

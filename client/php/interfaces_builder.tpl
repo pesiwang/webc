@@ -1,5 +1,5 @@
 <?php
-namespace <%$server->namespace%>;
+namespace webc;
 
 require_once __DIR__ . '/structs.class.php';
 require_once __DIR__ . '/errors.class.php';
