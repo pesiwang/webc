@@ -15,6 +15,7 @@
 	asiRequest.postLength = request.length;
 	asiRequest.timeOutSeconds = 30.0f;
 	asiRequest.cachePolicy = ASIDoNotWriteToCacheCachePolicy|ASIDoNotReadFromCacheCachePolicy;
+	asiRequest.allowCompressedResponse = YES;
 	[asiRequest startSynchronous];
 	if ([asiRequest error]) {
 		return nil;
@@ -30,6 +31,7 @@
 	asiRequest.postLength = request.length;
 	asiRequest.timeOutSeconds = 30.0f;
 	asiRequest.cachePolicy = ASIDoNotWriteToCacheCachePolicy|ASIDoNotReadFromCacheCachePolicy;
+	asiRequest.allowCompressedResponse = YES;
 	[asiRequest setCompletionBlock:^{
 		responseBlock(_asiRequest.responseData);
 	}];
