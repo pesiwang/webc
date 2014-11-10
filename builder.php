@@ -28,7 +28,6 @@ class ObjStruct
 {
 	public $name;
 	public $params;
-	public $isRefered;
 }
 
 class ObjInterface
@@ -64,7 +63,6 @@ class Builder
 		$this->_compileErrors();
 		$this->_compileStructs();
 		$this->_compileInterfaces();
-		$this->_clearUnreferedStructs();
 
 		$smarty = new \Smarty();
 		$smarty->compile_dir = '/tmp';
@@ -116,40 +114,50 @@ class Builder
 		}
 	}
 
+	private function _compileStruct($parentName, $item){
+		if(NULL == $item->attributes()->name)
+			throw new \Exception("no [name] attribute found in [struct] block");
+		if(NULL == $item->param)
+			throw new \Exception("no [param] node found in [struct] block");
+
+		$struct = new ObjStruct();
+		$struct->name = (string)($item->attributes()->name);
+		if(strlen($parentName) <= 0)
+			$struct->name = (string)($item->attributes()->name);
+		else
+			$struct->name = $parentName . '_' . (string)($item->attributes()->name);
+
+		$struct->params = array();
+
+		foreach($item->param as $subItem){
+			if(NULL == $subItem->attributes()->name)
+				throw new \Exception("no [name] attribute found in [param] block");
+			if(NULL == $subItem->attributes()->type)
+				throw new \Exception("no [type] attribute found in [param] block");
+
+			$param = new ObjParam();
+			$param->name = (string)($subItem->attributes()->name);
+			$param->type = (string)($subItem->attributes()->type);
+			$param->reference = (NULL != $subItem->attributes()->reference) ? (string)($subItem->attributes()->reference) : NULL;
+
+			if((($param->type == 'OBJECT') || ($param->type == 'ARRAY')) && ($param->reference == NULL)){
+				$subStruct = $this->_compileStruct($struct->name, $subItem);
+				$param->reference = $subStruct->name;
+			}
+
+			$struct->params[] = $param;
+		}
+		$this->_structs[$struct->name] = $struct;
+		$this->_knownStructs[$struct->name] = 1;
+
+		return $struct;
+	}
+
 	private function _compileStructs(){
 		$this->_knownStructs = array();
 
-		foreach($this->_xml->struct as $item){
-			if(NULL == $item->attributes()->name)
-				throw new \Exception("no [name] attribute found in [struct] block");
-			if(NULL == $item->param)
-				throw new \Exception("no [param] node found in [struct] block");
-			
-			$struct = new ObjStruct();
-			$struct->name = (string)($item->attributes()->name);
-			$struct->params = array();
-			$struct->isRefered = false;
-
-			foreach($item->param as $subItem){
-				if(NULL == $subItem->attributes()->name)
-					throw new \Exception("no [name] attribute found in [param] block");
-				if(NULL == $subItem->attributes()->type)
-					throw new \Exception("no [type] attribute found in [param] block");
-
-				$param = new ObjParam();
-				$param->name = (string)($subItem->attributes()->name);
-				$param->type = (string)($subItem->attributes()->type);
-				$param->reference = (NULL != $subItem->attributes()->reference) ? (string)($subItem->attributes()->reference) : NULL;
-
-				if((($param->type == 'OBJECT') || ($param->type == 'ARRAY')) && ($param->reference == NULL))
-					throw new \Exception("no [reference] attribute found in [param as OBJECT or ARRAY] block");
-
-				$struct->params[] = $param;
-			}
-
-			$this->_structs[$struct->name] = $struct;
-			$this->_knownStructs[$struct->name] = 1;
-		}
+		foreach($this->_xml->struct as $item)
+			$this->_compileStruct('', $item);
 
 		foreach($this->_structs as &$struct){
 			foreach($struct->params as $param){
@@ -158,7 +166,6 @@ class Builder
 
 				if(!isset($this->_knownStructs[$param->reference]))
 					throw new \Exception('refering to unknown struct ' . $param->reference . ' in [' . $struct->name . ']');
-				$this->_structs[$param->reference]->isRefered = true;
 			}
 		}
 	}
@@ -177,17 +184,8 @@ class Builder
 				throw new \Exception('refering to unknown struct ' . $interface->request);
 			if(!isset($this->_knownStructs[$interface->response]))
 				throw new \Exception('refering to unknown struct ' . $interface->response);
-			$this->_structs[$interface->request]->isRefered = true;
-			$this->_structs[$interface->response]->isRefered = true;
 
 			$this->_interfaces[] = $interface;
-		}
-	}
-
-	private function _clearUnreferedStructs(){
-		foreach($this->_structs as $key => &$struct){
-			if(!$struct->isRefered)
-				unset($this->_structs[$key]);
 		}
 	}
 }

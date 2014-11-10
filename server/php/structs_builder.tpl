@@ -55,6 +55,10 @@ class Structs extends Struct
 	public function getObjects(){
 		return $this->_objects;
 	}
+
+	public function addObject($object){
+		$this->_objects[] = $object;
+	}
 }
 
 <%foreach $structs as $struct%>
