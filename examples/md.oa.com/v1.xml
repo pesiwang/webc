@@ -1,0 +1,42 @@
+<webc>
+	<!--{第一部分,版本定义}-->
+	<version>1</version>
+
+	<!--{第二部分,定义结构体}-->
+	<objects>
+		<struct name="common_user_info">
+			<string name="name"/>
+			<string name="icon"/>
+			<integer name="gender"/>
+		</struct>
+		<struct name="verify_fetch_request">
+			<string name="mobile"/>
+		</struct>
+		<struct name="verify_fetch_response">
+			<string name="code"/>
+		</struct>
+		<struct name="user_register_request">
+			<string name="mobile"/>
+			<string name="password"/>
+			<string name="verify"/>
+			<struct name="info" reference="common_user_info"/>
+		</struct>
+		<struct name="user_register_response">
+			<integer name="uid"/>
+		</struct>
+		<struct name="user_login_request">
+			<string name="mobile"/>
+			<string name="password"/>
+		</struct>
+		<struct name="user_login_response">
+			<string name="auth"/>
+		</struct>
+	</objects>
+
+	<!--{第三部分,定义web接口列表}-->
+	<interfaces>
+		<interface name="verify.fetch" request="verify_fetch_request" response="verify_fetch_response"/><!--获取验证码-->
+		<interface name="user.register" request="user_register_request" response="user_register_response"/><!--用户注册-->
+		<interface name="user.login" request="user_login_request" response="user_login_response"/><!--用户登录-->
+	</interfaces>
+</webc>
