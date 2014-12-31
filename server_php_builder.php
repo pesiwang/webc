@@ -24,7 +24,7 @@ class ServerPhpBuilder extends Builder {
 				$smarty = $this->getSmarty();
 				$smarty->assign('interface', $interface);
 				$content = $smarty->fetch(__DIR__ . '/server/php/interface.class.tpl');
-				$this->saveFile('/app/v' . $parser->getVersion() . '/interfaces/' . str_replace('.', '/', $interface->getName()) . '.class.php', $content);
+				$this->saveFile('/app/v' . $parser->getVersion() . '/interfaces/' . str_replace('.', '/', $interface->getName()) . '.class.php', $content, false);
 			}
 		}
 	}

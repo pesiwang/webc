@@ -40,12 +40,17 @@ abstract class Builder {
 		return $smarty;
 	}
 
-	protected function saveFile($file, $content) {
+	protected function saveFile($file, $content, $overwrite = true) {
 		$dir = $this->_targetFolder . '/' . dirname($file);
 		if (!file_exists($dir)) {
 			mkdir($dir, 0777, true);
 		}
-		file_put_contents($this->_targetFolder . '/' . $file, $content);
+		if (!$overwrite && file_exists($this->_targetFolder . '/' . $file)) {
+			echo "skipping " . $this->_targetFolder . '/' . $file, "\n";
+		}
+		else {
+			file_put_contents($this->_targetFolder . '/' . $file, $content);
+		}
 	}
 
 	abstract function build();
