@@ -17,6 +17,7 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import android.os.Handler;
 import android.os.Message;
+import com.vanchu.lib.webc.WebcObject.WebcNull;
 import com.vanchu.lib.webc.WebcObject.WebcStruct.*;
 
 public class WebcClient {
@@ -138,7 +139,7 @@ public class WebcClient {
 					case 0:
                 		<%$interface->getResponse()->getClassName()%> response = new <%$interface->getResponse()->getClassName()%>();
 						try {
-							response.unserialize(json);
+							response.unserialize((JSONObject)(msg.obj));
 		                	callback.onSuccess(response);
 						} catch (Exception e) {
 							callback.onFailure(new Error(-1, "protocol error"));

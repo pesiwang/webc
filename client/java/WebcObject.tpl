@@ -35,7 +35,7 @@ public abstract class WebcObject {
 	}
     
     static public WebcObject smartObject(JSONObject data) throws Exception {
-    	if (!data.has(PROTO_KEY_NAME) || !data.has(PROTO_KEY_TYPE) || !data.has(PROTO_KEY_PAYLOAD)) {
+    	if (!data.has(PROTO_KEY_TYPE)) {
     		throw new Exception("bad protocol");
     	}
     	
@@ -51,6 +51,9 @@ public abstract class WebcObject {
                  break;
              case TYPE_STRUCT:
              	{
+					if (!data.has(PROTO_KEY_NAME)) {
+						throw new Exception("bad protocol");
+					}
              		className = "WebcStruct";
              		Matcher matcher = Pattern.compile("_?([a-z0-9]+)").matcher(data.getString(PROTO_KEY_NAME));
             		while(matcher.find()) {
@@ -94,9 +97,9 @@ public abstract class WebcObject {
 
     	@Override
     	public void unserialize(JSONObject data) throws Exception {
-    		if (!data.has(PROTO_KEY_TYPE) || (data.getInt(PROTO_KEY_TYPE) != WebcObject.TYPE_INTEGER) || !data.has(PROTO_KEY_PAYLOAD)) {
-    			throw new Exception("unserialize failed, protocol mismatch");
-    		}
+			if (!data.has(PROTO_KEY_TYPE) || (data.getInt(PROTO_KEY_TYPE) != WebcObject.TYPE_INTEGER) || !data.has(PROTO_KEY_PAYLOAD)) {
+				throw new Exception("unserialize failed, protocol mismatch");
+			}
     		
     		this._val = data.getInt(PROTO_KEY_PAYLOAD);
     	}    	

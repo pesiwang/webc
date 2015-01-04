@@ -35,7 +35,7 @@ public abstract class WebcObject {
 	}
     
     static public WebcObject smartObject(JSONObject data) throws Exception {
-    	if (!data.has(PROTO_KEY_NAME) || !data.has(PROTO_KEY_TYPE) || !data.has(PROTO_KEY_PAYLOAD)) {
+    	if (!data.has(PROTO_KEY_TYPE)) {
     		throw new Exception("bad protocol");
     	}
     	
@@ -51,6 +51,9 @@ public abstract class WebcObject {
                  break;
              case TYPE_STRUCT:
              	{
+					if (!data.has(PROTO_KEY_NAME)) {
+						throw new Exception("bad protocol");
+					}
              		className = "WebcStruct";
              		Matcher matcher = Pattern.compile("_?([a-z0-9]+)").matcher(data.getString(PROTO_KEY_NAME));
             		while(matcher.find()) {

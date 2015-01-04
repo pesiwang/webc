@@ -15,6 +15,7 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import com.vanchu.lib.webc.WebcObject.WebcNull;
 import com.vanchu.lib.webc.WebcObject.WebcStruct.*;
 
 public class WebcClient {
