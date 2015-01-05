@@ -7,6 +7,10 @@ abstract class WebcObject {
 	const TYPE_ARRAY = 0x12;
 	const TYPE_NULL = 0xFF;
 
+	const PROTO_KEY_NAME = 'n';
+	const PROTO_KEY_TYPE = 't';
+	const PROTO_KEY_PAYLOAD = 'p';
+
 	abstract public function serialize();
 	abstract public function unserialize(Array $data);
 
@@ -16,10 +20,10 @@ abstract class WebcObject {
 	}
 
 	static public function smartObject($data) {
-		if (!is_array($data) || !is_int($data['t'])) {
+		if (!is_array($data) || !is_int($data[WebcObject::PROTO_KEY_TYPE])) {
 			throw new Exception('bad protocol');
 		}
-		switch($data['t']) {
+		switch($data[WebcObject::PROTO_KEY_TYPE]) {
 			case self::TYPE_INTEGER:
 				$className = 'WebcInteger';
 				break;
@@ -30,10 +34,10 @@ abstract class WebcObject {
 				$className = 'WebcBool';
 				break;
 			case self::TYPE_STRUCT:
-				if (!is_string($data['n'])) {
+				if (!is_string($data[WebcObject::PROTO_KEY_NAME])) {
 					throw new Exception('bad protocol');
 				}
-				$className = 'WebcStruct' . ucfirst(preg_replace('/_([a-z])/ei', "strtoupper('\\1')", $data['n']));
+				$className = 'WebcStruct' . ucfirst(preg_replace('/_([a-z])/ei', "strtoupper('\\1')", $data[WebcObject::PROTO_KEY_NAME]));
 				break;
 			case self::TYPE_ARRAY:
 				$className = 'WebcArray';
@@ -57,23 +61,23 @@ abstract class WebcObject {
 
 class WebcStruct extends WebcObject {
 	public function serialize() {
-		$data = array('n' => $this->getName(), 't' => WebcObject::TYPE_STRUCT, 'p' => array());
+		$data = array(WebcObject::PROTO_KEY_NAME => $this->getName(), WebcObject::PROTO_KEY_TYPE => WebcObject::TYPE_STRUCT, WebcObject::PROTO_KEY_PAYLOAD => array());
 		foreach($this as $k => &$obj) {
 			if (!is_a($obj, 'WebcObject')) {
 				continue;
 			}
-			$data['p'][$k] = $obj->serialize();
+			$data[WebcObject::PROTO_KEY_PAYLOAD][$k] = $obj->serialize();
 		}
 		return $data;
 	}
 
 	public function unserialize(Array $data) {
-		if (!is_int($data['t']) || ($data['t'] != WebcObject::TYPE_STRUCT) || !is_array($data['p'])) {
+		if (!is_int($data[WebcObject::PROTO_KEY_TYPE]) || ($data[WebcObject::PROTO_KEY_TYPE] != WebcObject::TYPE_STRUCT) || !is_array($data[WebcObject::PROTO_KEY_PAYLOAD])) {
 			throw new Exception('unserialize failed, protocol mismatch');
 		}
 		foreach($this as $k => &$obj) {
-			if (is_array($data['p'][$k])) {
-				$this->$k->unserialize($data['p'][$k]);
+			if (is_array($data[WebcObject::PROTO_KEY_PAYLOAD][$k])) {
+				$this->$k->unserialize($data[WebcObject::PROTO_KEY_PAYLOAD][$k]);
 			}
 		}
 	}
@@ -91,23 +95,23 @@ class WebcArray extends WebcObject {
 	}
 
 	public function serialize() {
-		$data = array('t' => WebcObject::TYPE_ARRAY, 'p' => array());
+		$data = array(WebcObject::PROTO_KEY_TYPE => WebcObject::TYPE_ARRAY, WebcObject::PROTO_KEY_PAYLOAD => array());
 		foreach($this->_objects as $obj) {
 			if (!is_a($obj, 'WebcObject')) {
 				continue;
 			}
-			$data['p'][] = $obj->serialize();
+			$data[WebcObject::PROTO_KEY_PAYLOAD][] = $obj->serialize();
 		}
 		return $data;
 	}
 
 	public function unserialize(Array $data) {
-		if (!is_int($data['t']) || ($data['t'] != WebcObject::TYPE_ARRAY) || !is_array($data['p'])) {
+		if (!is_int($data[WebcObject::PROTO_KEY_TYPE]) || ($data[WebcObject::PROTO_KEY_TYPE] != WebcObject::TYPE_ARRAY) || !is_array($data[WebcObject::PROTO_KEY_PAYLOAD])) {
 			throw new Exception('unserialize failed, protocol mismatch');
 		}
 
 		$this->_objects = array();
-		foreach($data['p'] as $subData) {
+		foreach($data[WebcObject::PROTO_KEY_PAYLOAD] as $subData) {
 			$this->_objects[] = WebcObject::smartObject($subData);
 		}
 	}
@@ -118,7 +122,7 @@ class WebcInteger extends WebcObject {
 
 	public function set($val) {
 		if (!is_int($val)) {
-			throw new Execption('type mismatch, int expected');
+			throw new Exception('type mismatch, int expected');
 		}
 		$this->_val = $val;
 	}
@@ -128,14 +132,14 @@ class WebcInteger extends WebcObject {
 	}
 
 	public function serialize() {
-		return array('t' => WebcObject::TYPE_INTEGER, 'p' => $this->_val);
+		return array(WebcObject::PROTO_KEY_TYPE => WebcObject::TYPE_INTEGER, WebcObject::PROTO_KEY_PAYLOAD => $this->_val);
 	}
 
 	public function unserialize(Array $data) {
-		if (!is_int($data['t']) || ($data['t'] != WebcObject::TYPE_INTEGER) || !is_int($data['p'])) {
+		if (!is_int($data[WebcObject::PROTO_KEY_TYPE]) || ($data[WebcObject::PROTO_KEY_TYPE] != WebcObject::TYPE_INTEGER) || !is_int($data[WebcObject::PROTO_KEY_PAYLOAD])) {
 			throw new Exception('unserialize failed, protocol mismatch');
 		}
-		$this->_val = $data['p'];
+		$this->_val = $data[WebcObject::PROTO_KEY_PAYLOAD];
 	}
 }
 
@@ -144,7 +148,7 @@ class WebcString extends WebcObject {
 
 	public function set($val) {
 		if (!is_string($val)) {
-			throw new Execption('type mismatch, string expected');
+			throw new Exception('type mismatch, string expected');
 		}
 		$this->_val = $val;
 	}
@@ -154,14 +158,14 @@ class WebcString extends WebcObject {
 	}
 
 	public function serialize() {
-		return array('t' => WebcObject::TYPE_STRING, 'p' => $this->_val);
+		return array(WebcObject::PROTO_KEY_TYPE => WebcObject::TYPE_STRING, WebcObject::PROTO_KEY_PAYLOAD => $this->_val);
 	}
 
 	public function unserialize(Array $data) {
-		if (!is_int($data['t']) || ($data['t'] != WebcObject::TYPE_STRING) || !is_string($data['p'])) {
-			throw new Execption('unserialize failed, protocol mismatch');
+		if (!is_int($data[WebcObject::PROTO_KEY_TYPE]) || ($data[WebcObject::PROTO_KEY_TYPE] != WebcObject::TYPE_STRING) || !is_string($data[WebcObject::PROTO_KEY_PAYLOAD])) {
+			throw new Exception('unserialize failed, protocol mismatch');
 		}
-		$this->_val = $data['p'];
+		$this->_val = $data[WebcObject::PROTO_KEY_PAYLOAD];
 	}
 }
 
@@ -170,7 +174,7 @@ class WebcBool extends WebcObject {
 
 	public function set($val) {
 		if (!is_bool($val)) {
-			throw new Execption('type mismatch, bool expected');
+			throw new Exception('type mismatch, bool expected');
 		}
 		$this->_val = $val;
 	}
@@ -180,20 +184,20 @@ class WebcBool extends WebcObject {
 	}
 
 	public function serialize() {
-		return array('t' => WebcObject::TYPE_BOOL, 'p' => $this->_val);
+		return array(WebcObject::PROTO_KEY_TYPE => WebcObject::TYPE_BOOL, WebcObject::PROTO_KEY_PAYLOAD => $this->_val);
 	}
 
 	public function unserialize(Array $data) {
-		if (!is_int($data['t']) || ($data['t'] != WebcObject::TYPE_BOOL) || !is_bool($data['p'])) {
-			throw new Execption('unserialize failed, protocol mismatch');
+		if (!is_int($data[WebcObject::PROTO_KEY_TYPE]) || ($data[WebcObject::PROTO_KEY_TYPE] != WebcObject::TYPE_BOOL) || !is_bool($data[WebcObject::PROTO_KEY_PAYLOAD])) {
+			throw new Exception('unserialize failed, protocol mismatch');
 		}
-		$this->_val = $data['p'];
+		$this->_val = $data[WebcObject::PROTO_KEY_PAYLOAD];
 	}
 }
 
 class WebcNull extends WebcObject {
 	public function serialize() {
-		return array('t' => WebcObject::TYPE_NULL);
+		return array(WebcObject::PROTO_KEY_TYPE => WebcObject::TYPE_NULL);
 	}
 
 	public function unserialize(Array $data) {
