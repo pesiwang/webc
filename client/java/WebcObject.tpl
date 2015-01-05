@@ -217,7 +217,15 @@ public abstract class WebcObject {
     
     public static class WebcArray extends WebcObject {
     	private ArrayList<WebcObject> _objects = new ArrayList<WebcObject>(); 
-    	
+
+		public void addObject(WebcObject object) {
+			this._objects.add(object);
+		}
+
+		public ArrayList<WebcObject> getObjects() {
+			return this._objects;
+		}
+
     	@Override
     	public JSONObject serialize() throws Exception {
     		JSONArray payload = new JSONArray();

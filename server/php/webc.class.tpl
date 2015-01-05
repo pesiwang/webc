@@ -20,25 +20,25 @@ abstract class WebcObject {
 			throw new Exception('bad protocol');
 		}
 		switch($data['t']) {
-			case TYPE_INTEGER:
+			case self::TYPE_INTEGER:
 				$className = 'WebcInteger';
 				break;
-			case TYPE_STRING:
+			case self::TYPE_STRING:
 				$className = 'WebcString';
 				break;
-			case TYPE_BOOL:
+			case self::TYPE_BOOL:
 				$className = 'WebcBool';
 				break;
-			case TYPE_STRUCT:
+			case self::TYPE_STRUCT:
 				if (!is_string($data['n'])) {
 					throw new Exception('bad protocol');
 				}
 				$className = 'WebcStruct' . ucfirst(preg_replace('/_([a-z])/ei', "strtoupper('\\1')", $data['n']));
 				break;
-			case TYPE_ARRAY:
+			case self::TYPE_ARRAY:
 				$className = 'WebcArray';
 				break;
-			case TYPE_NULL:
+			case self::TYPE_NULL:
 				$className = 'WebcNull';
 				break;
 			default:
@@ -84,6 +84,10 @@ class WebcArray extends WebcObject {
 
 	public function addObject(WebcObject $object) {
 		$this->_objects[] = $object;
+	}
+
+	public function getObjects() {
+		return $this->_objects;
 	}
 
 	public function serialize() {

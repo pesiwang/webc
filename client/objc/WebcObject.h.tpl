@@ -39,6 +39,8 @@ typedef NS_ENUM(NSInteger, WebcObjectType) {
 @end
 
 @interface WebcArray : WebcObject<WebcObject>
+- (void)addObject:(WebcObject *)object;
+- (NSArray<WebcObject> *)getObjects;
 @end
 
 @interface WebcNull : WebcObject<WebcObject>

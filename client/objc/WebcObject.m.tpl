@@ -278,6 +278,14 @@ static const NSString* PROTO_KEY_PAYLOAD = @"p";
 	return self;
 }
 
+- (void)addObject:(WebcObject *)object {
+	[_objects addObject:object];
+}
+
+- (NSArray<WebcObject> *)getObjects {
+	return _objects;
+}
+
 - (NSDictionary *)serialize {
 	NSMutableArray* payload = [NSMutableArray new];
 	for (WebcObject *object in _objects) {
