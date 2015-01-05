@@ -56,6 +56,15 @@ class WebcString extends WebcObject {
 }
 
 class WebcArray extends WebcObject {
+	private $_references = array();
+
+	public function addReference($reference) {
+		$this->_references[$reference] = 1;
+	}
+
+	public function getReferences() {
+		return $this->_references;
+	}
 }
 
 class WebcNull extends WebcObject {
@@ -198,14 +207,21 @@ class Parser {
 		while (is_a($obj, 'WebcReference')) {
 			$obj = $obj->getTarget();
 		}
-		if (!is_a($obj, 'WebcStruct')) {
+		if (!is_a($obj, 'WebcStruct') && !is_a($obj, 'WebcArray')) {
 			return;
 		}
 
-		$name = $obj->getOriginalName();
-		$structsStatus[$obj->getOriginalName()] = 1;
-		foreach($obj->getObjects() as $subObj) {
-			$this->filterStructs($subObj, $structsStatus);
+		if (is_a($obj, 'WebcStruct')) {
+			$name = $obj->getOriginalName();
+			$structsStatus[$obj->getOriginalName()] = 1;
+			foreach($obj->getObjects() as $subObj) {
+				$this->filterStructs($subObj, $structsStatus);
+			}
+		}
+		else if (is_a($obj, 'WebcArray')) {
+			foreach ($obj->getReferences() as $reference => $unused) {
+				$structsStatus[$reference] = 1;
+			}
 		}
 	}
 
@@ -240,7 +256,7 @@ class Parser {
 			$obj = $this->parseStructOrReference($item, $namePrefix);
 		}
 		else if (strcmp((string)($item->getName()), 'array') == 0) {
-			$obj = new WebcArray($fullName);
+			$obj = $this->parseArray($item, $namePrefix);
 		}
 		else if (strcmp((string)($item->getName()), 'integer') == 0) {
 			$obj = new WebcInteger($fullName);
@@ -255,6 +271,18 @@ class Parser {
 			throw new Exception('unrecognized tag ' . (string)($item->getName()));
 		}
 
+		return $obj;
+	}
+
+	private function parseArray(SimpleXMLElement $item, $namePrefix) {
+		$obj = new WebcArray($namePrefix . (string)($item['name']));
+		if (!isset($item['reference'])) {
+			throw new Exception('undefined reference attribute in tag ' . (string)($item->getName()));
+		}
+
+		foreach(explode(',', (string)($item['reference'])) as $reference) {
+			$obj->addReference($reference);
+		}
 		return $obj;
 	}
 

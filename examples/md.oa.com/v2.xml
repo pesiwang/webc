@@ -12,7 +12,7 @@
 			<string name="pauth"/>
 		</struct>
 		<struct name="foo_bar_request">
-			<array name="something"/>
+			<array name="something" reference="haha,user_login_request"/>
 			<struct name="something1" reference="haha"/>
 			<struct name="somethingelse">
 				<string name="aaa"/>
