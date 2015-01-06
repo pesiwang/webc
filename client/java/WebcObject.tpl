@@ -43,14 +43,14 @@ public abstract class WebcObject {
     	switch(data.getInt(PROTO_KEY_TYPE)) {
     		case TYPE_INTEGER:
     			break;
-    		 case TYPE_STRING:
-    			 className = "WebcString";
-                 break;
-             case TYPE_BOOL:
-            	 className = "WebcBool";
-                 break;
-             case TYPE_STRUCT:
-             	{
+			case TYPE_STRING:
+				className = "WebcString";
+				break;
+			case TYPE_BOOL:
+				className = "WebcBool";
+				break;
+			case TYPE_STRUCT:
+				{
 					if (!data.has(PROTO_KEY_NAME)) {
 						throw new Exception("bad protocol");
 					}
@@ -60,15 +60,15 @@ public abstract class WebcObject {
             			className += matcher.group(1).substring(0, 1).toUpperCase() + matcher.group(1).substring(1);
             		}
              	}
-                 break;
-             case TYPE_ARRAY:
-            	 className = "WebcArray";
-                 break;
-             case TYPE_NULL:
-            	 className = "WebcNull";
-                 break;
-             default:
-                 throw new Exception("bad protocol"); 
+				break;
+			case TYPE_ARRAY:
+				className = "WebcArray";
+				break;
+			case TYPE_NULL:
+				className = "WebcNull";
+				break;
+			default:
+				throw new Exception("bad protocol"); 
     	}
     	WebcObject obj = (WebcObject) Class.forName(className).newInstance();
     	obj.unserialize(data);
@@ -234,7 +234,6 @@ public abstract class WebcObject {
     		}
     		
     		JSONObject json = new JSONObject();
-    		json.put(PROTO_KEY_NAME, this.getName());
     		json.put(PROTO_KEY_TYPE, WebcObject.TYPE_ARRAY);
     		json.put(PROTO_KEY_PAYLOAD, payload);
     		return json;

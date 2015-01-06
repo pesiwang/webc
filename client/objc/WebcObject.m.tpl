@@ -292,7 +292,7 @@ static const NSString* PROTO_KEY_PAYLOAD = @"p";
 		[payload addObject:[object serialize]];
 	}
 	
-	return @{PROTO_KEY_NAME: [self getOriginalName], PROTO_KEY_TYPE: @(WebcObjectTypeArray), PROTO_KEY_PAYLOAD: payload};
+	return @{PROTO_KEY_TYPE: @(WebcObjectTypeArray), PROTO_KEY_PAYLOAD: payload};
 }
 
 - (void)unserialize:(NSDictionary *)data {

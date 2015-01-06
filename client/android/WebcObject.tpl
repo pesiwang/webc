@@ -234,7 +234,6 @@ public abstract class WebcObject {
     		}
     		
     		JSONObject json = new JSONObject();
-    		json.put(PROTO_KEY_NAME, this.getName());
     		json.put(PROTO_KEY_TYPE, WebcObject.TYPE_ARRAY);
     		json.put(PROTO_KEY_PAYLOAD, payload);
     		return json;
