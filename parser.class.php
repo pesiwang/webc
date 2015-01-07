@@ -220,7 +220,7 @@ class Parser {
 		}
 		else if (is_a($obj, 'WebcArray')) {
 			foreach ($obj->getReferences() as $reference => $unused) {
-				if (isset($this->_structs[$reference])) {
+				if (!isset($this->_structs[$reference])) {
 					continue;
 				}
 				$structsStatus[$reference] = 1;
