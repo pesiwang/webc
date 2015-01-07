@@ -42,7 +42,8 @@ var WebcObject = {
 					if (!data.hasOwnProperty(WEBC_PROTO_KEY_NAME)) {
 						throw new WebcException("bad protocol");
 					}
-					className = "WebcStruct" + data[WEBC_PROTO_KEY_NAME].replace(/\\.([A-Z])/g, "$1".toLowerCase());
+					classNameSuffix = data[WEBC_PROTO_KEY_NAME].replace(/\\.([a-z])/gi, "$1".toUpperCase());
+					className = "WebcStruct" + classNameSuffix.charAt(0).toUpperCase() + classNameSuffix.slice(1);
 				}
 				break;
 			case WEBC_OBJECT_TYPE_ARRAY:
