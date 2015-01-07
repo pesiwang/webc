@@ -76,7 +76,7 @@ class WebcStruct extends WebcObject {
 			throw new Exception('unserialize failed, protocol mismatch');
 		}
 		foreach($this as $k => &$obj) {
-			if (is_array($data[WebcObject::PROTO_KEY_PAYLOAD][$k])) {
+			if (isset($data[WebcObject::PROTO_KEY_PAYLOAD][$k]) && is_array($data[WebcObject::PROTO_KEY_PAYLOAD][$k])) {
 				$this->$k->unserialize($data[WebcObject::PROTO_KEY_PAYLOAD][$k]);
 			}
 		}
