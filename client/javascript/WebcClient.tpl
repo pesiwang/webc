@@ -4,16 +4,6 @@ function WebcError(code, msg) {
 };
 
 var WebcClient = {
-	_host: 'localhost',
-	_port: 80,
-	_protocol: 'http',
-	setup: function(host, port, protocol) {
-		this._host = host;
-		if (port)
-			this._port = port;
-		if (protocol)
-			this._protocol = protocol;
-	},
 <%foreach $interfaces as $interface%>
 	invoke<%$interface->getName(true)%>: function(request, responseCallback, failureCallback) {
 		try {
@@ -67,7 +57,7 @@ var WebcClient = {
 				}
 			}
 		}
-		var url = this._protocol + "://" + this._host + ":" + this._port + "/" + version + "/" + interfaceName;
+		var url = "/" + version + "/" + interfaceName;
 		xmlHttpRequest.open("POST", url, true);
 		xmlHttpRequest.send(JSON.stringify(request.serialize()));
 	}
