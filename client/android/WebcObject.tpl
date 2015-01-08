@@ -70,7 +70,7 @@ public abstract class WebcObject {
              default:
                  throw new Exception("bad protocol"); 
     	}
-    	WebcObject obj = (WebcObject) Class.forName(className).newInstance();
+    	WebcObject obj = (WebcObject) Class.forName("com.vanchu.lib.webc.WebcObject$WebcStruct$" + className).newInstance();
     	obj.unserialize(data);
     	return obj;
     }
