@@ -136,10 +136,10 @@ public class WebcClient {
                 <%$interface->getResponse()->getClassName()%> response = new <%$interface->getResponse()->getClassName()%>();
 				try {
 					response.unserialize(json);
-                	callback.onSuccess(response);
 				} catch (Exception e) {
 					callback.onFailure(new Error(-1, "protocol error"));
 				}
+               	callback.onSuccess(response);
             }
 
             @Override
