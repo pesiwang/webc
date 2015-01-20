@@ -66,7 +66,7 @@ class Bootstrap{
 			echo json_encode(array('r' => $result, 'p' => $outputData));
 		}
 		catch(Exception $e) {
-			self::error(-1, 'Internal Server Error');
+			self::error(-1, 'Internal Server Error : ' . $e->getMessage());
 		}
 	}
 }

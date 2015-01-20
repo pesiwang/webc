@@ -11,7 +11,7 @@ class ServerPhpBuilder extends Builder {
 
 		$smarty = $this->getSmarty();
 		$content = $smarty->fetch(__DIR__ . '/server/php/bootstrap.tpl');
-		$this->saveFile('/bootstrap.php', $content);
+		$this->saveFile('/bootstrap.php', $content, false);
 
 		foreach ($this->_sourceFiles as $sourceFile) {
 			$parser = $this->getParser($sourceFile);

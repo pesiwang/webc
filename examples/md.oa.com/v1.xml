@@ -6,37 +6,73 @@
 	<objects>
 		<struct name="common_user_info">
 			<string name="name"/>
-			<string name="icon"/>
+			<string name="face"/>
 			<integer name="gender"/>
+			<struct name="birth">
+				<integer name="year"/>
+				<integer name="month"/>
+				<integer name="day"/>
+			</struct>
 		</struct>
+
 		<struct name="verify_fetch_request">
 			<string name="mobile"/>
+			<string name="business"/>
 		</struct>
 		<struct name="verify_fetch_response">
 			<string name="code"/>
 		</struct>
-		<struct name="user_register_request">
+		<struct name="verify_check_request">
+			<string name="mobile"/>
+			<string name="business"/>
+			<string name="code"/>
+		</struct>
+		<struct name="verify_check_response">
+			<bool name="correct"/>
+		</struct>
+		<struct name="account_check_request">
+			<string name="mobile"/>
+		</struct>
+		<struct name="account_check_response">
+			<bool name="exists"/>
+		</struct>
+		<struct name="account_register_request">
 			<string name="mobile"/>
 			<string name="password"/>
-			<string name="verify"/>
+			<string name="code"/>
+		</struct>
+		<struct name="account_register_response">
+			<integer name="uid"/>
+			<string name="auth"/>
+		</struct>
+		<struct name="account_login_request">
+			<string name="mobile"/>
+			<string name="password"/>
+		</struct>
+		<struct name="account_login_response">
+			<integer name="uid"/>
+			<string name="auth"/>
+		</struct>
+		<struct name="user_info_update_request">
+			<string name="auth"/>
 			<struct name="info" reference="common_user_info"/>
 		</struct>
-		<struct name="user_register_response">
-			<integer name="uid"/>
-		</struct>
-		<struct name="user_login_request">
-			<string name="mobile"/>
-			<string name="password"/>
-		</struct>
-		<struct name="user_login_response">
+		<struct name="user_info_sync_request">
 			<string name="auth"/>
+		</struct>
+		<struct name="user_info_sync_response">
+			<struct name="info" reference="common_user_info"/>
 		</struct>
 	</objects>
 
 	<!--{第三部分,定义web接口列表}-->
 	<interfaces>
 		<interface name="verify.fetch" request="verify_fetch_request" response="verify_fetch_response"/><!--获取验证码-->
-		<interface name="user.register" request="user_register_request" response="user_register_response"/><!--用户注册-->
-		<interface name="user.login" request="user_login_request" response="user_login_response"/><!--用户登录-->
+		<interface name="verify.check" request="verify_check_request" response="verify_check_response"/><!--检查验证码-->
+		<interface name="account.check" request="account_check_request" response="account_check_response"/><!--检查手机是否注册过-->
+		<interface name="account.register" request="account_register_request" response="account_register_response"/><!--用户注册-->
+		<interface name="account.login" request="account_login_request" response="account_login_response"/><!--用户登录-->
+		<interface name="user.info.update" request="user_info_update_request" response=""/><!--用户信息更新C->S-->
+		<interface name="user.info.sync" request="user_info_sync_request" response="user_info_sync_response"/><!--用户信息更新S->C-->
 	</interfaces>
 </webc>

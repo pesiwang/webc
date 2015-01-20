@@ -74,7 +74,7 @@ public class WebcClient {
 				HttpPost httpPost = new HttpPost(_protocol + "://" + _host + ":" + _port + "/" + version + "/" + interfaceName);
 				httpPost.addHeader("Accept-Encoding", "gzip");
 				try {
-					httpPost.setEntity(new StringEntity(request.serialize().toString()));
+					httpPost.setEntity(new StringEntity(request.serialize().toString(), HTTP.UTF_8));
 				} catch (Exception e) {
 					callback.onFailure(new Error(-1, "bad request"));
 					return;
