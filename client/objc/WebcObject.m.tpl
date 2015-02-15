@@ -51,13 +51,14 @@ static const NSString* PROTO_KEY_PAYLOAD = @"p";
 					[NSException raise:@"bad protocol" format:@"missing name key"];
 				}
 				
-				NSMutableString *name = [data objectForKey:PROTO_KEY_NAME];
+				NSMutableString *name = [[NSMutableString alloc] initWithString:[data objectForKey:PROTO_KEY_NAME]];
 				BOOL shouldCapitalize = YES;
 				for (NSUInteger i = 0; i < name.length; ++i) {
 					unichar ch = [name characterAtIndex:i];
-					if (ch == '.') {
+					if (ch == '_') {
 						[name replaceCharactersInRange:NSMakeRange(i, 1) withString:@""];
 						shouldCapitalize = YES;
+						--i;
 					}
 					else {
 						if (shouldCapitalize) {
